@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Models - Website Building</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
+    <style>
+        .models-container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .model-card {
+            flex: 1;
+            min-width: 300px;
+            max-width: 350px;
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 6px 20px rgba(31, 89, 130, 0.25);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .model-card h2 {
+            background: linear-gradient(
+                90deg,
+                #00c6ff 0%,
+                #ffffff 33%,
+                #a367ff 66%,
+                #00c6ff 100%
+            );
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGradient 8s ease infinite;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #00c6ff;
+        }
+
+        .model-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .model-card li {
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            border-left: 3px solid #00aaff;
+        }
+
+        .back-link {
+            display: inline-block;
+            text-align: center;
+            margin-top: 2rem;
+            background: linear-gradient(
+                90deg,
+                #00c6ff 0%,
+                #ffffff 33%,
+                #a367ff 66%,
+                #00c6ff 100%
+            );
+            background-size: 300% auto;
+            animation: textGradient 8s ease infinite;
+            padding: 0.6rem 1.2rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+            font-size: 0.9rem;
+            color: #000000;
+            text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-link:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body>
+    <spline-viewer url="https://prod.spline.design/wKM1IvAfzG75yP5J/scene.splinecode"></spline-viewer>
+    <div class="models-container">
+        <div class="model-card">
+            <h2>Basic</h2>
+            <ul>
+                <li>Single Page Website</li>
+                <li>3 Content Sections</li>
+                <li>Basic SEO Setup</li>
+                <li>Mobile Responsive</li>
+                <li>Contact Form</li>
+                <li>1 Round of Revisions</li>
+            </ul>
+        </div>
+
+        <div class="model-card">
+            <h2>Professional</h2>
+            <ul>
+                <li>Multi-Page Website</li>
+                <li>Up to 5 Pages</li>
+                <li>Advanced SEO Optimization</li>
+                <li>Mobile Responsive</li>
+                <li>Contact Form</li>
+                <li>Blog Integration</li>
+                <li>Social Media Integration</li>
+                <li>3 Rounds of Revisions</li>
+            </ul>
+        </div>
+
+        <div class="model-card">
+            <h2>Premium</h2>
+            <ul>
+                <li>Custom Website Design</li>
+                <li>Unlimited Pages</li>
+                <li>Premium SEO Package</li>
+                <li>Mobile Responsive</li>
+                <li>Advanced Contact Forms</li>
+                <li>E-commerce Integration</li>
+                <li>Blog & Social Media</li>
+                <li>Analytics Dashboard</li>
+                <li>Unlimited Revisions</li>
+                <li>Priority Support</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="text-align: center;">
+        <a href="index.html" class="back-link">Back to Home</a>
+    </div>
+<div class="quick-access">
+    <div class="quick-item" data-action="home">⌂</div>
+    <div class="quick-item" data-action="portfolio">□</div>
+    <div class="quick-item" data-action="contact">✉</div>
+    <div class="quick-item" data-action="ai-details">AI</div>
+</div>
+</body>
+<script src="script.js"></script>
+</html>

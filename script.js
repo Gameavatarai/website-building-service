@@ -589,88 +589,63 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    // --- Logic based on Call Type ---
-    if (bookingFormData.callType === 'lets-go') {
-        // **Redirect to Planning Form for 'Let's go Call'**
+    // --- Handle ALL Call Submissions (Planning form redirect temporarily disabled) ---
+    // Send data to Make.com Webhook
+    const webhookUrl = 'https://hook.eu2.make.com/jkvuy43075o4cg89hemr9vc1r7m9w1ye'; // Using the same webhook for now
+    fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingFormData), // Send combined data including package if 'lets-go'
+    })
+    .then(response => {
+        if (!response.ok) {
+            console.warn(`Webhook response not OK: ${response.status} ${response.statusText}`);
+            return response.text();
+        }
+        console.log('Successfully sent data to webhook.');
+        return response.json(); // Or response.text() if Make doesn't return JSON
+    })
+    .then(data => {
+        if (data) console.log('Webhook response data:', data);
+    })
+    .catch((error) => {
+        console.error('Error sending data to webhook:', error);
+    })
+    .finally(() => {
+        // Simulate Email (Adjust log based on actual call type)
+        const callTypeTextLog = bookingFormData.callType === 'inspiring' ? 'Inspiring Call (50€)' : `Let's go Call (${bookingFormData.package || 'N/A'} Package)`;
+        console.log(`--- Booking Submission (${callTypeTextLog}) ---`);
+        console.log("Simulating email sending to: support@gameavatarai.de");
+        console.log(`Subject: New Booking Request (${callTypeTextLog})`);
+        console.log("Body:");
+        console.log(` Call Type: ${callTypeTextLog}`);
+        if (bookingFormData.package) console.log(` Package: ${bookingFormData.package}`); // Log package if present
+        console.log(` Date: ${bookingFormData.date}`);
+        console.log(` Time: ${bookingFormData.time}`);
+        console.log(` Name: ${bookingFormData.firstName} ${bookingFormData.lastName}`);
+        console.log(` Email: ${bookingFormData.email}`);
+        if (bookingFormData.company) console.log(` Company: ${bookingFormData.company}`);
+        if (bookingFormData.phone) console.log(` Phone: ${bookingFormData.phone}`);
+        if (bookingFormData.notes) console.log(` Notes: ${bookingFormData.notes}`);
+        console.log("--------------------------");
 
-        // Determine target form based on selected package
-        const selectedPackage = bookingFormData.package || 'basic'; // Default to basic if somehow null
-        const targetForm = selectedPackage === 'basic' ? 'basic-planning-form.html' : 'advanced-planning-form.html';
+        // Save booking to localStorage
+        try {
+            let bookings = JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || '[]');
+            bookings.push(bookingFormData); // Save the complete data
+            localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
+            removeSlotFromAvailability(bookingFormData.bookedSlotISO);
+        } catch (error) {
+            console.error("Error saving booking to localStorage:", error);
+        }
 
-        // Build URL parameters
-        const urlParams = new URLSearchParams();
-        urlParams.set('date', bookingFormData.date);
-        urlParams.set('time', bookingFormData.time);
-        urlParams.set('callType', bookingFormData.callType);
-        urlParams.set('package', selectedPackage); // Add package
-        urlParams.set('firstName', bookingFormData.firstName);
-        urlParams.set('lastName', bookingFormData.lastName);
-        urlParams.set('email', bookingFormData.email);
-        urlParams.set('company', bookingFormData.company);
-        urlParams.set('phone', bookingFormData.phone);
-        urlParams.set('notes', bookingFormData.notes);
-
-        // Redirect to the appropriate planning form
-        console.log(`Redirecting to ${targetForm} for package: ${selectedPackage}`);
-        window.location.href = `${targetForm}?${urlParams.toString()}`;
-
-    } else {
-        // **Handle 'Inspiring Call' Submission (Existing Logic)**
-        // Send data to Make.com Webhook
-        const webhookUrl = 'https://hook.eu2.make.com/jkvuy43075o4cg89hemr9vc1r7m9w1ye';
-        fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(bookingFormData), // Use bookingFormData here
-        })
-        .then(response => {
-            if (!response.ok) {
-                console.warn(`Webhook response not OK: ${response.status} ${response.statusText}`);
-                return response.text();
-            }
-            console.log('Successfully sent data to webhook.');
-            return response.json();
-        })
-        .then(data => {
-            if (data) console.log('Webhook response data:', data);
-        })
-        .catch((error) => {
-            console.error('Error sending data to webhook:', error);
-        })
-        .finally(() => {
-            // Simulate Email
-            console.log("--- Booking Submission (Inspiring Call) ---");
-            console.log("Simulating email sending to: support@gameavatarai.de");
-            console.log("Subject: New Booking Request (Inspiring Call)");
-            console.log("Body:");
-            console.log(` Call Type: Inspiring Call (50€)`);
-            console.log(` Date: ${bookingFormData.date}`);
-            console.log(` Time: ${bookingFormData.time}`);
-            console.log(` Name: ${bookingFormData.firstName} ${bookingFormData.lastName}`);
-            console.log(` Email: ${bookingFormData.email}`);
-            if (bookingFormData.company) console.log(` Company: ${bookingFormData.company}`);
-            if (bookingFormData.phone) console.log(` Phone: ${bookingFormData.phone}`);
-            if (bookingFormData.notes) console.log(` Notes: ${bookingFormData.notes}`);
-            console.log("--------------------------");
-
-            // Save booking to localStorage
-            try {
-                let bookings = JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || '[]');
-                bookings.push(bookingFormData); // Use bookingFormData
-                localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
-                removeSlotFromAvailability(bookingFormData.bookedSlotISO); // Use bookingFormData
-            } catch (error) {
-                console.error("Error saving booking to localStorage:", error);
-            }
-
-            // Close popup and redirect for Inspiring Call
-            closeBookingPopup();
-            window.location.href = 'thank-you.html?source=booking';
-        });
-    }
-    // --- End Logic based on Call Type ---
+        // Close popup and redirect to thank-you page for ALL call types now
+        closeBookingPopup();
+        window.location.href = 'thank-you.html?source=booking';
+    });
+    // --- End Combined Submission Handling ---
 
     /* Original fetch logic moved inside the 'else' block for Inspiring Call
     fetch(webhookUrl, {

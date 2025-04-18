@@ -9,6 +9,9 @@
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
 </head>
 <body>
+    <div class="logo-container">
+        <img src="AI Logo New.png" alt="Avatar AI Web Studios Logo" class="logo">
+    </div>
     <spline-viewer url="https://prod.spline.design/wKM1IvAfzG75yP5J/scene.splinecode"></spline-viewer>
     <section id="intro"> <!-- Removed inline styles -->
         <h1>Build Your Dream Website</h1>
@@ -137,8 +140,19 @@
                 </select>
             </div>
 
+            <!-- Package Selection (Only for Let's go Call) -->
+            <div class="package-selector" id="package-selector" style="display: none; margin-bottom: 1.5rem;">
+                 <label for="package-type" style="display: block; margin-bottom: 0.5rem; color: #ccc;">2. Select Package:</label>
+                 <select id="package-type" name="package-type" style="padding: 0.7rem; border-radius: 5px; border: 1px solid #555; background-color: rgba(51, 51, 51, 0.8); color: #eee; width: 100%; font-size: 0.9rem;">
+                     <option value="basic">Basic Package</option>
+                     <option value="professional">Professional Package</option>
+                     <option value="premium">Premium Package</option>
+                 </select>
+            </div>
+            <!-- End Package Selection -->
+
             <div class="calendar-widget">
-                <h4 style="margin-bottom: 0.8rem; color: #eee;">2. Select an available time slot:</h4>
+                <h4 style="margin-bottom: 0.8rem; color: #eee;"><span id="step-number">2</span>. Select an available time slot:</h4>
                 <!-- Calendar UI will be generated here by JS -->
                 <div id="calendar-slots" style="min-height: 100px; background-color: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
                     <p style="color: #aaa; width: 100%; text-align: center; font-style: italic;">Loading available times...</p>

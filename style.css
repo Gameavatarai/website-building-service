@@ -178,9 +178,19 @@ body {
     opacity: 0.7;
 }
 
+/* Common Hover Gradient Border */
+.spline-card:hover,
+.carousel-card-3d:hover,
+.portfolio-card:hover {
+    border-width: 2px; /* Adjust thickness as needed */
+    border-style: solid;
+    border-image-source: linear-gradient(90deg, #00c6ff, #a367ff);
+    border-image-slice: 1;
+}
+
 .spline-card:hover {
     transform: rotateY(0deg) rotateX(0deg) scale(1.05); /* Straighten and scale up on hover */
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+    /* box-shadow removed */
 }
 
 .spline-card h3 {
@@ -301,6 +311,11 @@ body {
     box-sizing: border-box;
     overflow-y: auto;
     color: #e0e0e0;
+    transition: transform 0.3s ease; /* Add transition for hover effect */
+}
+
+.carousel-card-3d:hover {
+    transform: scale(1.03); /* Add slight scale effect on hover */
 }
 
 .carousel-card-3d p, .carousel-card-3d ul {
@@ -499,13 +514,31 @@ body {
     padding: 1.5rem;
     box-sizing: border-box;
     color: #e0e0e0;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-image 0.3s ease; /* Added border-image to transition */
 }
 
 .portfolio-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7);
+    /* box-shadow removed, border-image added via common rule */
 }
+
+/* Ensure specific portfolio card hover styles don't conflict badly */
+.portfolio-card:nth-child(2):hover .cta-button {
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.3); /* Keep specific button shadow */
+}
+
+.portfolio-card:nth-child(3):hover {
+     /* Keep specific transform and shadow for wooden card */
+    transform: perspective(1000px) rotateY(-3deg) rotateX(1deg) translateY(-8px);
+    box-shadow:
+        8px 8px 20px rgba(0, 0, 0, 0.6),
+        inset 0 0 8px rgba(0, 0, 0, 0.4);
+    /* Override common border for wooden card */
+    border-image-source: none;
+    border-image-slice: 0;
+    border: 1px solid #633411; /* Re-apply original border */
+}
+
 
 .portfolio-card h2 {
     background: linear-gradient(
@@ -607,6 +640,10 @@ body {
 
 .circle-card:hover {
     transform: translateY(-5px) rotate(2deg);
+    /* Override common gradient border */
+    border-image-source: none;
+    border-image-slice: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Re-apply original border */
 }
 
 .portfolio-card p {
@@ -1040,12 +1077,20 @@ body {
 .card-container:hover .card {
     background: radial-gradient(circle, rgba(50, 50, 50, 0.9) 0%, rgba(30, 30, 30, 0.95) 100%); /* Slightly lighter on hover */
     transform: translateX(5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 198, 255, 0.3); /* Enhanced shadow on hover */
+    /* Updated box-shadow for gradient glow */
+    box-shadow:
+        0 0 10px 2px rgba(0, 198, 255, 0.6), /* Inner cyan glow */
+        0 0 20px 5px rgba(163, 103, 255, 0.4), /* Outer purple glow */
+        0 15px 30px rgba(0, 0, 0, 0.6); /* Base shadow */
 }
 
 .card-container:hover .circle-cutout {
-    background: linear-gradient(135deg, #0f1436 0%, #251545 50%, #351a50 100%); /* Slightly lighter background on hover */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 198, 255, 0.3); /* Enhanced shadow on hover */
+    background: radial-gradient(circle, rgba(50, 50, 50, 0.9) 0%, rgba(30, 30, 30, 0.95) 100%); /* Match card hover background */
+    /* Updated box-shadow for gradient glow */
+     box-shadow:
+        0 0 10px 2px rgba(0, 198, 255, 0.6), /* Inner cyan glow */
+        0 0 20px 5px rgba(163, 103, 255, 0.4), /* Outer purple glow */
+        0 15px 30px rgba(0, 0, 0, 0.6); /* Base shadow */
 }
 
 /* Responsive adjustments for section 2 card */
@@ -1333,4 +1378,78 @@ body {
 }
 #booking-popup {
     z-index: 1051; /* Higher z-index */
+}
+
+/* --- Logo and Glow Effect --- */
+.logo-container {
+    position: absolute; /* Changed from fixed to absolute */
+    top: 20px;
+    left: 20px;
+    z-index: 100; /* Ensure it's above most content */
+    width: 100px; /* Adjust as needed */
+    height: auto; /* Adjust as needed */
+    /* Variables for customization */
+    --glow-color-1: rgba(0, 198, 255, 0.6); /* #00c6ff with alpha */
+    --glow-color-2: rgba(163, 103, 255, 0.4); /* #a367ff with alpha */
+    --glow-blur: 30px;
+    --glow-spread: 15px;
+    --animation-speed: 4s;
+    --animation-intensity-min: 0.8;
+    --animation-intensity-max: 1.2;
+}
+
+.logo {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative; /* Needed for z-index stacking within container */
+    z-index: 2; /* Logo above the glow */
+}
+
+.logo-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%; /* Slightly larger than logo */
+    height: 120%; /* Slightly larger than logo */
+    background: radial-gradient(circle, var(--glow-color-1) 0%, var(--glow-color-2) 50%, transparent 70%);
+    filter: blur(var(--glow-blur));
+    z-index: 1; /* Glow behind the logo */
+    border-radius: 50%; /* Make the glow circular */
+    opacity: var(--animation-intensity-min); /* Start at min intensity */
+    animation: pulseGlow var(--animation-speed) ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        opacity: var(--animation-intensity-min);
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+    50% {
+        opacity: var(--animation-intensity-max);
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Responsive adjustments for logo */
+@media (max-width: 768px) {
+    .logo-container {
+        top: 15px;
+        left: 15px;
+        width: 80px; /* Smaller logo on smaller screens */
+        --glow-blur: 20px;
+        --glow-spread: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-container {
+        top: 10px;
+        left: 10px;
+        width: 60px; /* Even smaller */
+        --glow-blur: 15px;
+        --glow-spread: 8px;
+    }
 }

@@ -229,6 +229,16 @@ section {
 
 #save-status.success {
     color: #28a745; /* Green for success */
+    font-weight: bold;
+}
+
+#save-status.error {
+    color: #dc3545; /* Red for error */
+    font-weight: bold;
+}
+
+#save-status.success {
+    color: #28a745; /* Green for success */
 }
 
 #save-status.error {
@@ -354,4 +364,97 @@ section {
 
 #close-details-view-btn:hover {
     background-color: #5a6268;
+}
+
+/* --- Planning Details Modal Styles --- */
+
+.details-modal { /* Shared style for modals */
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1001; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+    padding-top: 60px; /* Location of the box */
+}
+
+#planning-details-view .details-modal-content { /* Specific content styling */
+     background-color: #fefefe;
+     margin: 5% auto; /* 5% from the top and centered */
+     padding: 25px;
+     border: 1px solid #888;
+     width: 80%; /* Could be more or less, depending on screen size */
+     max-width: 700px;
+     border-radius: 8px;
+     position: relative;
+     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+     max-height: 80vh; /* Limit height */
+     overflow-y: auto; /* Add scroll for content */
+}
+
+#planning-details-content h3 {
+    margin-top: 0;
+    color: #17a2b8; /* Match section color */
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+#planning-details-content p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+#planning-details-content strong {
+    color: #343a40;
+    margin-right: 5px;
+}
+
+#planning-details-content hr {
+    border: 0;
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 15px 0;
+}
+
+#planning-details-content em { /* Style for '(Not provided)' */
+    color: #6c757d;
+}
+
+.close-btn { /* Shared close button style */
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Style for the 'View Planning' button in the list */
+#booked-calls-list .view-planning-btn {
+    padding: 4px 8px;
+    background-color: #ffc107; /* Warning color for planning */
+    color: #212529;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-left: 5px; /* Adjust spacing if needed */
+    transition: background-color 0.2s;
+}
+
+#booked-calls-list .view-planning-btn:hover {
+    background-color: #e0a800;
 }

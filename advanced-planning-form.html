@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Website Planning Form</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to main stylesheet for consistency -->
+    <style>
+        /* Styles specific to this form */
+        body {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            font-family: sans-serif;
+            line-height: 1.6;
+            max-width: 850px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 28px;
+            margin-bottom: 5px;
+            color: #00c6ff;
+        }
+
+         .header h1 {
+             background: linear-gradient(
+                90deg,
+                #00c6ff 0%,
+                #ffffff 33%,
+                #a367ff 66%,
+                #00c6ff 100%
+            );
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGradient 8s ease infinite;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00c6ff;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(0, 198, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .sub-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .sub-section-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #a367ff; /* Accent color for sub-titles */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #ccc;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="url"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: rgba(51, 51, 51, 0.8);
+            color: #eee;
+            font-size: 0.95rem;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            margin-bottom: 15px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 20px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            min-width: 200px;
+        }
+
+        .checkbox-item input[type="checkbox"],
+        .radio-item input[type="radio"] {
+            margin-right: 8px;
+            accent-color: #00c6ff; /* Style checkbox/radio color */
+        }
+        .checkbox-item label,
+        .radio-item label {
+            font-weight: normal; /* Normal weight for options */
+            color: #e0e0e0;
+            margin-bottom: 0;
+        }
+
+        .color-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+
+        .color-input-group label {
+            width: 120px;
+            margin-bottom: 0;
+        }
+
+        input[type="color"] {
+            width: 60px;
+            height: 35px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .color-code {
+            width: 100px;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .required::after {
+            content: " *";
+            color: #e53e3e;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 13px;
+            color: #aaa;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .file-upload {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: rgba(51, 51, 51, 0.8);
+            color: #ccc; /* Placeholder text color */
+        }
+        .file-upload::file-selector-button { /* Style the button part */
+             background: linear-gradient(90deg,#00c6ff,#a367ff);
+             color: black;
+             border: none;
+             padding: 8px 12px;
+             border-radius: 4px;
+             cursor: pointer;
+             margin-right: 10px;
+        }
+
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .submit-button {
+            /* Use existing .cta-button styles */
+            display: inline-block;
+            background: linear-gradient(
+                90deg,
+                #00c6ff 0%,
+                #ffffff 33%,
+                #a367ff 66%,
+                #00c6ff 100%
+            );
+            background-size: 300% auto;
+            animation: textGradient 8s ease infinite;
+            padding: 10px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+            font-size: 1rem;
+            color: #000000;
+            text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .submit-button:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 10px; /* Adjust gap for columns */
+            }
+            .form-col {
+                 margin-bottom: 10px; /* Add margin between stacked columns */
+            }
+            .checkbox-item {
+                min-width: 150px; /* Adjust for smaller screens */
+            }
+        }
+         @media (max-width: 500px) {
+             .color-input-group {
+                 flex-direction: column;
+                 align-items: flex-start;
+             }
+             .color-input-group label {
+                 width: 100%;
+                 margin-bottom: 5px;
+             }
+             .color-code {
+                 margin-left: 0;
+                 margin-top: 5px;
+             }
+         }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="header">
+            <div class="logo">Avatar AI Web Studios</div>
+            <div>by Game Avatar AI</div>
+            <h1>Advanced Website Planning Form</h1>
+            <p>Please complete this detailed form for your Professional/Premium package</p>
+        </div>
+
+        <form id="planning-form" method="POST" enctype="multipart/form-data"> <!-- Action set by JS, allow file uploads -->
+             <!-- Hidden fields for booking data -->
+            <input type="hidden" id="form-type" name="form-type" value="advanced">
+            <input type="hidden" id="selected-date" name="selected-date">
+            <input type="hidden" id="selected-time" name="selected-time">
+            <input type="hidden" id="selected-call-type" name="selected-call-type">
+            <input type="hidden" id="selected-package" name="selected-package">
+            <input type="hidden" id="booking-first-name" name="booking-first-name">
+            <input type="hidden" id="booking-last-name" name="booking-last-name">
+            <input type="hidden" id="booking-email" name="booking-email">
+            <input type="hidden" id="booking-company" name="booking-company">
+            <input type="hidden" id="booking-phone" name="booking-phone">
+            <input type="hidden" id="booking-notes" name="booking-notes">
+
+            <!-- COMPANY DATA SECTION -->
+            <div class="form-section">
+                <div class="section-title">Company Data</div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="company-name" class="required">Company Name</label>
+                            <input type="text" id="company-name" name="company-name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="company-tagline">Company Tagline/Slogan</label>
+                            <input type="text" id="company-tagline" name="company-tagline">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="legal-notice">Legal Notice</label>
+                    <textarea id="legal-notice" name="legal-notice" rows="3" placeholder="Enter your company's legal notice / Impressum details"></textarea>
+                </div>
+
+                 <!-- Contact details are pre-filled from booking, shown for confirmation -->
+                 <div class="form-group">
+                    <label>Contact Person (from booking)</label>
+                    <p><strong id="display-name"></strong> (<span id="display-email"></span>)</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="position">Position/Role</label>
+                    <input type="text" id="position" name="position">
+                </div>
+
+                <div class="form-group">
+                    <label for="address" class="required">Address</label>
+                    <textarea id="address" name="address" rows="3" required placeholder="Street, City, Postal Code, Country"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Social Media Profiles</label>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <input type="url" placeholder="LinkedIn URL" name="linkedin">
+                        </div>
+                        <div class="form-col">
+                            <input type="url" placeholder="Facebook URL" name="facebook">
+                        </div>
+                    </div>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <div class="form-col">
+                            <input type="url" placeholder="Instagram URL" name="instagram">
+                        </div>
+                        <div class="form-col">
+                            <input type="url" placeholder="Twitter/X URL" name="twitter">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="business-description" class="required">Business Description</label>
+                    <textarea id="business-description" name="business-description" rows="4" placeholder="Describe your business, products or services in detail" required></textarea>
+                </div>
+            </div>
+
+            <!-- WEBSITE SECTION -->
+            <div class="form-section">
+                <div class="section-title">Website Details</div>
+
+                <div class="sub-section">
+                    <div class="sub-section-title">Brand & Visual Identity</div>
+
+                    <div class="form-group">
+                        <label>Color Palette (up to 3 colors)</label>
+
+                        <div class="color-input-group">
+                            <label for="color1">Primary Color:</label>
+                            <input type="color" id="color1" name="color1" value="#4a86e8">
+                            <input type="text" class="color-code" id="color1-code" value="#4a86e8">
+                        </div>
+
+                        <div class="color-input-group">
+                            <label for="color2">Secondary Color:</label>
+                            <input type="color" id="color2" name="color2" value="#ffffff">
+                            <input type="text" class="color-code" id="color2-code" value="#ffffff">
+                        </div>
+
+                        <div class="color-input-group">
+                            <label for="color3">Accent Color:</label>
+                            <input type="color" id="color3" name="color3" value="#ff9900">
+                            <input type="text" class="color-code" id="color3-code" value="#ff9900">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="logo-upload">Upload Logo (if available)</label>
+                        <input type="file" id="logo-upload" name="logo-upload" class="file-upload" accept="image/*">
+                        <p class="hint">Preferred formats: SVG, PNG, JPG</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brand-assets-upload">Upload Brand Assets/Guidelines (if available)</label>
+                        <input type="file" id="brand-assets-upload" name="brand-assets-upload" class="file-upload" accept=".pdf,.doc,.docx,.zip,.ai,.psd">
+                         <p class="hint">E.g., style guides, fonts, high-res images</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Brand Style Preferences</label>
+                        <div class="checkbox-container">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="modern" name="style-preference" value="modern">
+                                <label for="modern">Modern/Minimal</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="classic" name="style-preference" value="classic">
+                                <label for="classic">Classic/Traditional</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="bold" name="style-preference" value="bold">
+                                <label for="bold">Bold/Vibrant</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="elegant" name="style-preference" value="elegant">
+                                <label for="elegant">Elegant/Sophisticated</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="playful" name="style-preference" value="playful">
+                                <label for="playful">Playful/Creative</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="corporate" name="style-preference" value="corporate">
+                                <label for="corporate">Corporate/Professional</label>
+                            </div>
+                             <div class="checkbox-item">
+                                <input type="checkbox" id="tech" name="style-preference" value="tech">
+                                <label for="tech">Tech/Futuristic</label>
+                            </div>
+                             <div class="checkbox-item">
+                                <input type="checkbox" id="rustic" name="style-preference" value="rustic">
+                                <label for="rustic">Rustic/Natural</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <div class="sub-section-title">Website Purpose & Goals</div>
+
+                    <div class="form-group">
+                        <label for="website-purpose" class="required">Primary Purpose of Website</label>
+                        <textarea id="website-purpose" name="website-purpose" rows="3" placeholder="What is the main goal? (e.g., generate leads, sell products, build brand awareness)" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Type of Website</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="business" name="website-type" value="business">
+                                <label for="business">Business/Corporate</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="ecommerce" name="website-type" value="ecommerce">
+                                <label for="ecommerce">E-commerce/Online Store</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="portfolio" name="website-type" value="portfolio">
+                                <label for="portfolio">Portfolio/Showcase</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="blog" name="website-type" value="blog">
+                                <label for="blog">Blog/Content Platform</label>
+                            </div>
+                             <div class="radio-item">
+                                <input type="radio" id="community" name="website-type" value="community">
+                                <label for="community">Community/Forum</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="landing" name="website-type" value="landing">
+                                <label for="landing">Landing Page/Microsite</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="other-type" name="website-type" value="other">
+                                <label for="other-type">Other:</label>
+                                <input type="text" id="other-type-spec" name="other-type-spec" style="width: 200px; margin-left: 10px; padding: 5px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="business-goals">Business Goals for Website</label>
+                        <textarea id="business-goals" name="business-goals" rows="3" placeholder="List specific, measurable goals (e.g., increase online sales by 20%, generate 50 qualified leads per month)"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="success-metrics">Success Metrics</label>
+                        <textarea id="success-metrics" name="success-metrics" rows="3" placeholder="How will you measure success? (e.g., conversion rate, bounce rate, contact form submissions)"></textarea>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <div class="sub-section-title">Target Audience</div>
+
+                    <div class="form-group">
+                        <label for="target-audience" class="required">Target Audience Description</label>
+                        <textarea id="target-audience" name="target-audience" rows="3" placeholder="Describe your ideal customers/visitors in detail (demographics, interests, pain points)" required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="age-range">Age Range</label>
+                                <select id="age-range" name="age-range">
+                                    <option value="">Select age range</option>
+                                    <option value="under-18">Under 18</option>
+                                    <option value="18-24">18-24</option>
+                                    <option value="25-34">25-34</option>
+                                    <option value="35-44">35-44</option>
+                                    <option value="45-54">45-54</option>
+                                    <option value="55-64">55-64</option>
+                                    <option value="65+">65+</option>
+                                    <option value="all-ages">All Ages</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label>Primary Device Usage</label>
+                                <div class="checkbox-container" style="flex-direction: row;">
+                                    <div class="checkbox-item" style="min-width: 100px;">
+                                        <input type="checkbox" id="desktop" name="device" value="desktop">
+                                        <label for="desktop">Desktop</label>
+                                    </div>
+                                    <div class="checkbox-item" style="min-width: 100px;">
+                                        <input type="checkbox" id="tablet" name="device" value="tablet">
+                                        <label for="tablet">Tablet</label>
+                                    </div>
+                                    <div class="checkbox-item" style="min-width: 100px;">
+                                        <input type="checkbox" id="mobile" name="device" value="mobile">
+                                        <label for="mobile">Mobile</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label for="audience-needs">What problems does your audience face that your website can solve?</label>
+                        <textarea id="audience-needs" name="audience-needs" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <div class="sub-section-title">Content & Functionality</div>
+
+                    <div class="form-group">
+                        <label>Essential Pages/Sections</label>
+                        <div class="checkbox-container">
+                            <div class="checkbox-item"><input type="checkbox" id="home" name="pages" value="home" checked><label for="home">Home</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="about" name="pages" value="about"><label for="about">About Us</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="services" name="pages" value="services"><label for="services">Services</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="products" name="pages" value="products"><label for="products">Products</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="portfolio-page" name="pages" value="portfolio"><label for="portfolio-page">Portfolio/Case Studies</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="testimonials" name="pages" value="testimonials"><label for="testimonials">Testimonials/Reviews</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="blog-page" name="pages" value="blog"><label for="blog-page">Blog</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="faq" name="pages" value="faq"><label for="faq">FAQ</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="contact" name="pages" value="contact"><label for="contact">Contact</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="team" name="pages" value="team"><label for="team">Team Page</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="careers" name="pages" value="careers"><label for="careers">Careers/Jobs</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="press" name="pages" value="press"><label for="press">Press/Media</label></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additional-pages">Additional Custom Pages/Sections</label>
+                        <textarea id="additional-pages" name="additional-pages" rows="3" placeholder="Any other pages or sections needed (e.g., Resources, Partners, Events)"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Required Features</label>
+                        <div class="checkbox-container">
+                             <div class="checkbox-item"><input type="checkbox" id="contact-form" name="features" value="contact-form"><label for="contact-form">Contact Form(s)</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="newsletter" name="features" value="newsletter"><label for="newsletter">Newsletter Signup</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="social-media" name="features" value="social-media"><label for="social-media">Social Media Integration</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="gallery" name="features" value="gallery"><label for="gallery">Image/Video Gallery</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="booking" name="features" value="booking"><label for="booking">Booking/Scheduling System</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="ecommerce-feature" name="features" value="ecommerce"><label for="ecommerce-feature">E-commerce/Shopping Cart</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="blog-feature" name="features" value="blog"><label for="blog-feature">Blog Functionality</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="search" name="features" value="search"><label for="search">Site Search</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="user-accounts" name="features" value="user-accounts"><label for="user-accounts">User Accounts/Login</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="multilingual" name="features" value="multilingual"><label for="multilingual">Multilingual Support</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="maps" name="features" value="maps"><label for="maps">Interactive Maps</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="forum" name="features" value="forum"><label for="forum">Forum/Community Features</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="live-chat" name="features" value="live-chat"><label for="live-chat">Live Chat</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="analytics-feature" name="features" value="analytics"><label for="analytics-feature">Advanced Analytics</label></div>
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label for="feature-details">Details on Specific Features</label>
+                        <textarea id="feature-details" name="feature-details" rows="4" placeholder="Provide more details about complex features (e.g., specific e-commerce needs, user roles)"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Content Availability</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="content-yes" name="content-available" value="yes">
+                                <label for="content-yes">Content is ready (text, images, videos)</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="content-partial" name="content-available" value="partial">
+                                <label for="content-partial">Some content is ready, some needs to be created</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="content-no" name="content-available" value="no">
+                                <label for="content-no">Content needs to be created (copywriting/asset creation needed)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <div class="sub-section-title">Technical Requirements</div>
+
+                    <div class="form-group">
+                        <label for="domain">Domain Name (if registered)</label>
+                        <input type="text" id="domain" name="domain" placeholder="example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Domain Status</label>
+                        <div class="radio-group">
+                            <div class="radio-item"><input type="radio" id="domain-registered" name="domain-status" value="registered"><label for="domain-registered">Domain is registered</label></div>
+                            <div class="radio-item"><input type="radio" id="domain-not-registered" name="domain-status" value="not-registered"><label for="domain-not-registered">Need to register domain</label></div>
+                            <div class="radio-item"><input type="radio" id="domain-unsure" name="domain-status" value="unsure"><label for="domain-unsure">Not sure/Need advice</label></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hosting Status</label>
+                        <div class="radio-group">
+                            <div class="radio-item"><input type="radio" id="hosting-yes" name="hosting-status" value="yes"><label for="hosting-yes">Have hosting provider</label></div>
+                            <div class="radio-item"><input type="radio" id="hosting-no" name="hosting-status" value="no"><label for="hosting-no">Need hosting provider</label></div>
+                            <div class="radio-item"><input type="radio" id="hosting-unsure" name="hosting-status" value="unsure"><label for="hosting-unsure">Not sure/Need advice</label></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="existing-website">Existing Website URL (if applicable)</label>
+                        <input type="url" id="existing-website" name="existing-website" placeholder="https://example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="integrations">Required Third-Party Integrations</label>
+                        <textarea id="integrations" name="integrations" rows="3" placeholder="List any specific software/services that need integration (e.g., CRM, email marketing, payment gateways)"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="analytics-tracking">Analytics & Tracking</label>
+                        <div class="checkbox-container">
+                            <div class="checkbox-item"><input type="checkbox" id="google-analytics" name="analytics" value="google-analytics"><label for="google-analytics">Google Analytics</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="facebook-pixel" name="analytics" value="facebook-pixel"><label for="facebook-pixel">Meta (Facebook) Pixel</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="linkedin-insight" name="analytics" value="linkedin-insight"><label for="linkedin-insight">LinkedIn Insight Tag</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="google-tag-manager" name="analytics" value="google-tag-manager"><label for="google-tag-manager">Google Tag Manager</label></div>
+                            <div class="checkbox-item"><input type="checkbox" id="other-analytics" name="analytics" value="other-analytics"><label for="other-analytics">Other:</label><input type="text" style="width: 150px; margin-left: 5px; padding: 5px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <div class="sub-section-title">Project Timeline & Budget</div>
+
+                    <div class="form-group">
+                        <label for="launch-date">Desired Launch Date</label>
+                        <input type="date" id="launch-date" name="launch-date">
+                        <p class="hint">Please provide an ideal date or timeframe.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">Budget Range</label>
+                        <select id="budget" name="budget">
+                            <option value="">Select budget range (€ EUR)</option>
+                            <option value="under-1000">Under €1,000</option>
+                            <option value="1000-2500">€1,000 - €2,500</option>
+                            <option value="2500-5000">€2,500 - €5,000</option>
+                            <option value="5000-10000">€5,000 - €10,000</option>
+                            <option value="10000-20000">€10,000 - €20,000</option>
+                            <option value="20000-plus">€20,000+</option>
+                            <option value="not-sure">Not sure/Would like consultation</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ongoing Maintenance & Updates</label>
+                        <div class="radio-group">
+                            <div class="radio-item"><input type="radio" id="maintenance-yes" name="maintenance" value="yes"><label for="maintenance-yes">Yes, interested in maintenance plan</label></div>
+                            <div class="radio-item"><input type="radio" id="maintenance-no" name="maintenance" value="no"><label for="maintenance-no">No, will handle maintenance internally</label></div>
+                            <div class="radio-item"><input type="radio" id="maintenance-discuss" name="maintenance" value="discuss"><label for="maintenance-discuss">Would like to discuss options</label></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <div class="sub-section-title">Additional Information</div>
+
+                    <div class="form-group">
+                        <label for="competitor-websites">Competitor Websites</label>
+                        <textarea id="competitor-websites" name="competitor-websites" rows="3" placeholder="List URLs of 2-3 main competitors"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="websites-like">Websites You Like (Inspiration)</label>
+                        <textarea id="websites-like" name="websites-like" rows="3" placeholder="List URLs of websites you admire (mention specific aspects you like)"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additional-info">Additional Information or Special Requirements</label>
+                        <textarea id="additional-info" name="additional-info" rows="5" placeholder="Anything else we should know? Specific accessibility needs, performance goals, etc."></textarea>
+                    </div>
+                </div>
+            </div>
+
+             <div class="form-group" style="text-align: center;">
+                 <button type="submit" class="submit-button">Submit Planning Information</button>
+             </div>
+        </form>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for completing this comprehensive form. This information will help us better understand your needs and create a website that perfectly matches your vision.</p>
+        <p>© 2025 Avatar AI Web Studios by Game Avatar AI</p>
+    </div>
+
+    <script>
+        // Update color code inputs when color picker changes
+        document.getElementById('color1').addEventListener('input', function() { document.getElementById('color1-code').value = this.value; });
+        document.getElementById('color2').addEventListener('input', function() { document.getElementById('color2-code').value = this.value; });
+        document.getElementById('color3').addEventListener('input', function() { document.getElementById('color3-code').value = this.value; });
+
+        // Update color picker when code is changed manually
+        document.getElementById('color1-code').addEventListener('input', function() { document.getElementById('color1').value = this.value; });
+        document.getElementById('color2-code').addEventListener('input', function() { document.getElementById('color2').value = this.value; });
+        document.getElementById('color3-code').addEventListener('input', function() { document.getElementById('color3').value = this.value; });
+
+        // Populate hidden fields and display info from URL parameters
+         document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const form = document.getElementById('planning-form');
+
+            // Set form action (replace with your actual form handler endpoint)
+            form.action = '/.netlify/functions/form-handler'; // Example endpoint
+
+            // Populate hidden fields
+            document.getElementById('selected-date').value = urlParams.get('date') || '';
+            document.getElementById('selected-time').value = urlParams.get('time') || '';
+            document.getElementById('selected-call-type').value = urlParams.get('callType') || '';
+            document.getElementById('selected-package').value = urlParams.get('package') || '';
+            document.getElementById('booking-first-name').value = urlParams.get('firstName') || '';
+            document.getElementById('booking-last-name').value = urlParams.get('lastName') || '';
+            document.getElementById('booking-email').value = urlParams.get('email') || '';
+            document.getElementById('booking-company').value = urlParams.get('company') || '';
+            document.getElementById('booking-phone').value = urlParams.get('phone') || '';
+            document.getElementById('booking-notes').value = urlParams.get('notes') || '';
+
+             // Pre-fill company name if available from booking
+            const bookingCompany = urlParams.get('company');
+            if (bookingCompany) {
+                document.getElementById('company-name').value = bookingCompany;
+            }
+             // Pre-fill address if available (assuming it might be in notes or similar - adjust if needed)
+            // const bookingAddress = urlParams.get('address'); // Example if address was passed
+            // if (bookingAddress) {
+            //     document.getElementById('address').value = bookingAddress;
+            // }
+
+            // Display confirmation name/email
+            document.getElementById('display-name').textContent = (urlParams.get('firstName') || '') + ' ' + (urlParams.get('lastName') || '');
+            document.getElementById('display-email').textContent = urlParams.get('email') || '';
+
+        });
+    </script>
+</body>
+</html>

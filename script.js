@@ -319,6 +319,9 @@ const calendarPopup = document.getElementById('calendar-popup');
 const closeCalendarPopupButton = calendarPopup?.querySelector('.close-popup');
 const calendarSlotsContainer = document.getElementById('calendar-slots');
 const callTypeSelect = document.getElementById('call-type');
+const packageSelector = document.getElementById('package-selector'); // Get package selector div
+const packageTypeSelect = document.getElementById('package-type'); // Get package select element
+const stepNumberSpan = document.getElementById('step-number'); // Get step number span
 
 const bookingPopupOverlay = document.getElementById('booking-popup-overlay');
 const bookingPopup = document.getElementById('booking-popup');
@@ -566,11 +569,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookedTime = formData.get('selected-time');
 
         // Construct the ISO string using the separate variables
-        const bookedSlotISO = new Date(bookedDate + 'T' + bookedTime).toISOString();
+    const bookedSlotISO = new Date(bookedDate + 'T' + bookedTime).toISOString(); // Keep this for potential future use or logging
 
-        // Now create the bookingData object
-        const bookingData = {
-            callType: formData.get('selected-call-type'),
+    // Get all booking form data
+    const bookingFormData = {
+        callType: formData.get('selected-call-type'),
             date: bookedDate,
             time: bookedTime,
             firstName: formData.get('first-name'),
@@ -580,87 +583,148 @@ document.addEventListener('DOMContentLoaded', () => {
             phone: formData.get('phone') || '',   // Handle optional fields
             notes: formData.get('notes') || '',     // Handle optional fields
             submissionTimestamp: new Date().toISOString(),
-            bookedSlotISO: bookedSlotISO // Use the pre-calculated ISO string
-        };
+        bookedSlotISO: bookedSlotISO, // Keep ISO string
+        // Add selected package if it's a 'lets-go' call
+        ...(formData.get('selected-call-type') === 'lets-go' && packageTypeSelect ? { package: packageTypeSelect.value } : {})
+    };
 
-        // --- Send data to Make.com Webhook ---
+
+    // --- Logic based on Call Type ---
+    if (bookingFormData.callType === 'lets-go') {
+        // **Redirect to Planning Form for 'Let's go Call'**
+
+        // Determine target form based on selected package
+        const selectedPackage = bookingFormData.package || 'basic'; // Default to basic if somehow null
+        const targetForm = selectedPackage === 'basic' ? 'basic-planning-form.html' : 'advanced-planning-form.html';
+
+        // Build URL parameters
+        const urlParams = new URLSearchParams();
+        urlParams.set('date', bookingFormData.date);
+        urlParams.set('time', bookingFormData.time);
+        urlParams.set('callType', bookingFormData.callType);
+        urlParams.set('package', selectedPackage); // Add package
+        urlParams.set('firstName', bookingFormData.firstName);
+        urlParams.set('lastName', bookingFormData.lastName);
+        urlParams.set('email', bookingFormData.email);
+        urlParams.set('company', bookingFormData.company);
+        urlParams.set('phone', bookingFormData.phone);
+        urlParams.set('notes', bookingFormData.notes);
+
+        // Redirect to the appropriate planning form
+        console.log(`Redirecting to ${targetForm} for package: ${selectedPackage}`);
+        window.location.href = `${targetForm}?${urlParams.toString()}`;
+
+    } else {
+        // **Handle 'Inspiring Call' Submission (Existing Logic)**
+        // Send data to Make.com Webhook
         const webhookUrl = 'https://hook.eu2.make.com/jkvuy43075o4cg89hemr9vc1r7m9w1ye';
         fetch(webhookUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(bookingData),
+            body: JSON.stringify(bookingFormData), // Use bookingFormData here
         })
         .then(response => {
             if (!response.ok) {
-                // Log non-OK responses (like 4xx, 5xx errors)
                 console.warn(`Webhook response not OK: ${response.status} ${response.statusText}`);
-                return response.text(); // Attempt to read error body if any
+                return response.text();
             }
             console.log('Successfully sent data to webhook.');
-            return response.json(); // Or response.text() if Make doesn't return JSON
+            return response.json();
         })
         .then(data => {
             if (data) console.log('Webhook response data:', data);
         })
         .catch((error) => {
-            // Log network errors or CORS issues
             console.error('Error sending data to webhook:', error);
-            // Even if webhook fails, proceed with saving locally and redirecting
         })
         .finally(() => {
-            // This block executes whether the fetch succeeded or failed
+            // Simulate Email
+            console.log("--- Booking Submission (Inspiring Call) ---");
+            console.log("Simulating email sending to: support@gameavatarai.de");
+            console.log("Subject: New Booking Request (Inspiring Call)");
+            console.log("Body:");
+            console.log(` Call Type: Inspiring Call (50€)`);
+            console.log(` Date: ${bookingFormData.date}`);
+            console.log(` Time: ${bookingFormData.time}`);
+            console.log(` Name: ${bookingFormData.firstName} ${bookingFormData.lastName}`);
+            console.log(` Email: ${bookingFormData.email}`);
+            if (bookingFormData.company) console.log(` Company: ${bookingFormData.company}`);
+            if (bookingFormData.phone) console.log(` Phone: ${bookingFormData.phone}`);
+            if (bookingFormData.notes) console.log(` Notes: ${bookingFormData.notes}`);
+            console.log("--------------------------");
 
-            // ** --- Simulate Email Sending --- ** (Keep this log for reference)
-        console.log("--- Booking Submission ---");
-        console.log("Simulating email sending to: support@gameavatarai.de");
-        console.log("Subject: New Booking Request");
-        console.log("Body:");
-        console.log(` Call Type: ${bookingData.callType === 'inspiring' ? 'Inspiring Call (50€)' : "Let's go Call"}`);
-        console.log(` Date: ${bookingData.date}`);
-        console.log(` Time: ${bookingData.time}`);
-        console.log(` Name: ${bookingData.firstName} ${bookingData.lastName}`);
-        console.log(` Email: ${bookingData.email}`);
-        if (bookingData.company) console.log(` Company: ${bookingData.company}`);
-        if (bookingData.phone) console.log(` Phone: ${bookingData.phone}`);
-        if (bookingData.notes) console.log(` Notes: ${bookingData.notes}`);
-        console.log("--------------------------");
-        // ** --- End Simulation --- **
+            // Save booking to localStorage
+            try {
+                let bookings = JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || '[]');
+                bookings.push(bookingFormData); // Use bookingFormData
+                localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
+                removeSlotFromAvailability(bookingFormData.bookedSlotISO); // Use bookingFormData
+            } catch (error) {
+                console.error("Error saving booking to localStorage:", error);
+            }
 
-        // Save booking to localStorage
-        try {
-            let bookings = JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || '[]');
-            bookings.push(bookingData);
-            localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
-
-            // --- Remove booked slot from availability ---
-            removeSlotFromAvailability(bookingData.bookedSlotISO);
-            // --- End Remove Slot ---
-
-        } catch (error) {
-            console.error("Error saving booking to localStorage:", error);
-        }
-
-        // Close popup and show confirmation (or redirect)
-        closeBookingPopup();
-        // alert('Thank you for your booking! We will contact you shortly.');
-            // Or redirect:
-            window.location.href = 'thank-you.html?source=booking'; // Add query param if needed
+            // Close popup and redirect for Inspiring Call
+            closeBookingPopup();
+            window.location.href = 'thank-you.html?source=booking';
         });
-        // --- End Webhook Send ---
-
     }
+    // --- End Logic based on Call Type ---
 
+    /* Original fetch logic moved inside the 'else' block for Inspiring Call
+    fetch(webhookUrl, {
+        method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bookingData), // This part is now inside the 'else' block
+        })
+        .then(response => {
+            if (!response.ok) {
+                // ... rest of the original fetch logic ...
+            }
+            // ... rest of the original fetch logic ...
+        });
+        // --- End Webhook Send --- */
+}
     // --- Attach Event Listeners ---
-    if (openCalendarBtnInspiring) {
-        openCalendarBtnInspiring.addEventListener('click', openCalendarPopup); // Use global function
+
+    // Function to handle opening the calendar popup and setting the call type
+    function setupCalendarOpen(button, defaultCallType) {
+        if (button) {
+            button.addEventListener('click', () => {
+                if (callTypeSelect) {
+                    callTypeSelect.value = defaultCallType;
+                    // Manually trigger change event to update UI (package selector visibility)
+                    callTypeSelect.dispatchEvent(new Event('change'));
+                }
+                openCalendarPopup(); // Use global function
+            });
+        }
     }
-    if (openCalendarBtnLetsGo) {
-        openCalendarBtnLetsGo.addEventListener('click', openCalendarPopup); // Use global function
-    }
-     if (openCalendarBtnCarousel) {
-        openCalendarBtnCarousel.addEventListener('click', openCalendarPopup); // Use global function
+
+    // Setup buttons to open calendar with specific default call type
+    setupCalendarOpen(openCalendarBtnInspiring, 'inspiring');
+    setupCalendarOpen(openCalendarBtnLetsGo, 'lets-go');
+    setupCalendarOpen(openCalendarBtnCarousel, 'inspiring'); // Default carousel button to inspiring
+
+    // Show/Hide Package Selector based on Call Type
+    if (callTypeSelect && packageSelector && stepNumberSpan) {
+        callTypeSelect.addEventListener('change', () => {
+            if (callTypeSelect.value === 'lets-go') {
+                packageSelector.style.display = 'block';
+                stepNumberSpan.textContent = '3'; // Change step number for time slot selection
+            } else {
+                packageSelector.style.display = 'none';
+                stepNumberSpan.textContent = '2'; // Reset step number
+            }
+        });
+        // Initial check in case the default value is 'lets-go' (though unlikely here)
+        if (callTypeSelect.value === 'lets-go') {
+             packageSelector.style.display = 'block';
+             stepNumberSpan.textContent = '3';
+        }
     }
 
     // Close Calendar Popup

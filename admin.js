@@ -18,6 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const bookingDetailsView = document.getElementById('booking-details-view');
     const bookingDetailsContent = document.getElementById('booking-details-content');
     const closeDetailsViewBtn = document.getElementById('close-details-view-btn');
+    // --- Planning Details Modal Elements (will be added to admin.html) ---
+    const planningDetailsView = document.getElementById('planning-details-view');
+    const planningDetailsContent = document.getElementById('planning-details-content');
+    const closePlanningDetailsBtn = document.getElementById('close-planning-details-btn');
 
     // --- Booking Data ---
     let availableSlots = []; // Holds the current state of available slots
@@ -662,8 +666,57 @@ document.addEventListener('DOMContentLoaded', () => {
         if (addSlotBtn) addSlotBtn.addEventListener('click', addSlot);
         if (saveSlotsBtn) saveSlotsBtn.addEventListener('click', saveSlotsToLocalStorage);
         if (closeDetailsViewBtn) closeDetailsViewBtn.addEventListener('click', hideBookingDetails);
+        // Add listener for the new planning details modal close button
+        if (closePlanningDetailsBtn) closePlanningDetailsBtn.addEventListener('click', hidePlanningDetails);
     }
 
+    // --- Planning Details Modal Functions ---
+    function showPlanningDetails(index) {
+        if (!planningDetailsView || !planningDetailsContent || index >= bookedCalls.length) return;
+
+        const booking = bookedCalls[index];
+        if (booking.callType !== 'lets-go') return; // Only show for 'Let's go' calls
+
+        let detailsHtml = `<h3>Planning Details for ${booking.firstName} ${booking.lastName} (${booking.package} Package)</h3>`;
+        detailsHtml += `<p><strong>Form Type:</strong> ${booking['form-type'] || 'N/A'}</p><hr>`;
+
+        // Dynamically display all planning fields present in the booking object
+        // Exclude the standard booking fields already shown elsewhere
+        const standardBookingKeys = [
+            'callType', 'date', 'time', 'firstName', 'lastName', 'email', 'company',
+            'phone', 'notes', 'submissionTimestamp', 'bookedSlotISO', 'package', 'form-type',
+            'booking-first-name', 'booking-last-name', 'booking-email', 'booking-company',
+            'booking-phone', 'booking-notes', 'selected-date', 'selected-time',
+            'selected-call-type', 'selected-package' // Include hidden fields from form
+        ];
+
+        for (const key in booking) {
+            if (booking.hasOwnProperty(key) && !standardBookingKeys.includes(key)) {
+                // Format key for display (e.g., 'company-name' -> 'Company Name')
+                const formattedKey = key.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                let value = booking[key];
+
+                // Handle potential array values (e.g., from checkboxes)
+                if (Array.isArray(value)) {
+                    value = value.join(', ');
+                }
+                // Handle empty values
+                if (value === null || value === undefined || value === '') {
+                    value = '<em>(Not provided)</em>';
+                }
+
+                detailsHtml += `<p><strong>${formattedKey}:</strong> ${value}</p>`;
+            }
+        }
+
+        planningDetailsContent.innerHTML = detailsHtml;
+        planningDetailsView.style.display = 'block';
+    }
+
+     function hidePlanningDetails() {
+         if (planningDetailsView) planningDetailsView.style.display = 'none';
+         if (planningDetailsContent) planningDetailsContent.innerHTML = ''; // Clear content
+    }
 
     // --- Scheduled Calls Functions ---
 
@@ -722,6 +775,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 showBookingDetails(index);
             });
 
+            // Container for buttons
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'booking-actions'; // Class for styling button group
+            buttonContainer.appendChild(detailsBtn);
+
+            // --- Add Planning Details Button (only for 'Let's go' calls) ---
+            if (booking.callType === 'lets-go') {
+                const planningBtn = document.createElement('button');
+                planningBtn.textContent = 'View Planning';
+                planningBtn.className = 'view-planning-btn'; // New class for styling
+                planningBtn.dataset.bookingIndex = index;
+                planningBtn.addEventListener('click', () => {
+                    showPlanningDetails(index);
+                });
+                buttonContainer.appendChild(planningBtn); // Add to container
+            }
+            // --- End Planning Details Button ---
+
+
             // --- Add Cancel Button ---
             const cancelBtn = document.createElement('button');
             cancelBtn.textContent = 'Cancel';
@@ -734,16 +806,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     cancelBooking(index);
                 }
             });
+            buttonContainer.appendChild(cancelBtn); // Add cancel button last
             // --- End Add Cancel Button ---
 
-
-            // Container for buttons
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'booking-actions'; // Class for styling button group
-            buttonContainer.appendChild(detailsBtn);
-            buttonContainer.appendChild(cancelBtn);
-
-            li.appendChild(buttonContainer); // Append the container with buttons
+            li.appendChild(buttonContainer); // Append the container with all buttons
             bookedCallsList.appendChild(li);
         });
     }

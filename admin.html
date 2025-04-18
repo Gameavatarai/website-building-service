@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="admin.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>Website Analytics Dashboard</h1>
+
+        <div class="time-selector">
+            <label for="time-period">Select Period:</label>
+            <select id="time-period">
+                <option value="week">Last Week</option>
+                <option value="month">Last Month</option>
+                <option value="year">Last Year</option>
+                <option value="all">All Time</option>
+            </select>
+        </div>
+
+        <section id="traffic-analysis">
+            <h2>Traffic Analysis</h2>
+            <div class="chart-placeholder">Chart showing total traffic, organic vs. advertisement</div>
+            <!-- Data will be loaded here by JS -->
+        </section>
+
+        <section id="time-spent">
+            <h2>Time Spent Analysis</h2>
+            <div class="chart-placeholder">Chart showing average time spent overall and per section</div>
+            <!-- Data will be loaded here by JS -->
+        </section>
+
+        <section id="button-clicks">
+            <h2>Button Click Analysis</h2>
+            <div class="chart-placeholder">Data/Chart showing clicks for important buttons</div>
+            <!-- Data will be loaded here by JS -->
+        </section>
+
+        <section id="other-metrics">
+            <h2>Other Metrics</h2>
+            <div class="placeholder">Suggestions for other useful metrics can go here</div>
+            <!-- Data will be loaded here by JS -->
+        </section>
+
+        <section id="booking-availability">
+            <h2>Booking Availability Management</h2>
+            <p>Define the specific date and time slots when users can book calls.</p>
+
+            <div class="availability-controls">
+                <label for="new-slot-datetime">Add Available Slot:</label>
+                <input type="datetime-local" id="new-slot-datetime" name="new-slot-datetime">
+                <button id="add-slot-btn">Add Slot</button>
+            </div>
+
+            <div class="available-slots-list">
+                <h3>Current Available Slots:</h3>
+                <ul id="slots-list">
+                    <!-- Available slots will be listed here by JS -->
+                    <li>No slots defined yet.</li>
+                </ul>
+                <button id="save-slots-btn">Save Availability</button>
+                <p id="save-status" style="margin-top: 10px; color: #aaa;"></p>
+            </div>
+        </section>
+
+        <section id="scheduled-calls">
+            <h2>Scheduled Calls</h2>
+            <p>View upcoming and past scheduled calls.</p>
+            <div class="scheduled-calls-list">
+                <h3>Booked Appointments:</h3>
+                <ul id="booked-calls-list">
+                    <!-- Booked calls will be listed here by JS -->
+                    <li>No calls scheduled yet.</li>
+                </ul>
+            </div>
+            <div id="booking-details-view" style="display: none; margin-top: 20px; padding: 15px; background-color: #e9ecef; border-radius: 5px;">
+                <h3>Booking Details:</h3>
+                <pre id="booking-details-content" style="white-space: pre-wrap; word-wrap: break-word;"></pre>
+                <button id="close-details-view-btn" style="margin-top: 10px; padding: 5px 10px; background-color: #6c757d; color: white; border: none; border-radius: 3px; cursor: pointer;">Close Details</button>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

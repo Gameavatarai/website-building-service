@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - Website Building</title>
+    <meta name="description" content="Get in touch with Avatar AI Web Studios. Contact us for inquiries about our AI-powered custom website design and development services or to start your project.">
+    <title>Contact Avatar AI Web Studios | Get a Quote</title>
     <link rel="stylesheet" href="style.css"> <!-- Link the main stylesheet -->
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
     <style>
@@ -154,8 +155,28 @@
     <div class="quick-item" data-action="portfolio">□</div>
     <div class="quick-item" data-action="contact">✉</div>
     <div class="quick-item" data-action="ai-details">AI</div>
+    <div class="quick-item" data-action="about">i</div>
+    <div class="quick-item" data-action="models">$</div>
 </div>
     <script src="form-handler.js"></script>
+    <script src="script.js"></script>
+    <script src="analytics-tracker.js"></script>
+    <!-- Voiceflow Chatbot Script -->
+    <script type="text/javascript">
+      (function(d, t) {
+          var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+          v.onload = function() {
+            window.voiceflow.chat.load({
+              verify: { projectID: '680184a45e86db65357218cb' },
+              url: 'https://general-runtime.voiceflow.com',
+              versionID: 'production',
+              voice: {
+                url: "https://runtime-api.voiceflow.com"
+              }
+            });
+          }
+          v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs"; v.type = "text/javascript"; s.parentNode.insertBefore(v, s);
+      })(document, 'script');
+    </script>
 </body>
-<script src="script.js"></script>
 </html>

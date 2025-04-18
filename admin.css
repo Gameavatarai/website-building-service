@@ -1,0 +1,357 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+section {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+
+.time-selector {
+    margin-bottom: 30px;
+    text-align: right;
+}
+
+.time-selector label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.time-selector select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.chart-placeholder,
+.placeholder {
+    min-height: 150px; /* Ensure space for charts/data */
+    background-color: #e9ecef;
+    border: 1px dashed #ced4da;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-style: italic;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Basic styles for password prompt overlay (will be controlled by JS) */
+.password-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top */
+}
+
+.password-box {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.password-box label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.password-box input[type="password"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.password-box button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.password-box button:hover {
+    background-color: #0056b3;
+}
+
+.password-error {
+    color: red;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+/* --- Booking Availability Styles --- */
+
+#booking-availability {
+    background-color: #f8f9fa; /* Slightly different background */
+    border-top: 3px solid #007bff; /* Accent color */
+}
+
+#booking-availability p {
+    margin-bottom: 15px;
+    color: #555;
+}
+
+.availability-controls {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between elements */
+}
+
+.availability-controls label {
+    font-weight: bold;
+    margin-bottom: 0; /* Remove bottom margin as it's flex */
+}
+
+.availability-controls input[type="datetime-local"] {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.availability-controls button,
+.available-slots-list button {
+    padding: 8px 15px;
+    background-color: #28a745; /* Green for add/save */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.9rem;
+}
+
+.availability-controls button:hover,
+.available-slots-list button:hover {
+    background-color: #218838;
+}
+
+.available-slots-list h3 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+#slots-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+    max-height: 300px; /* Limit height and allow scrolling */
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+#slots-list li {
+    background-color: #f1f1f1;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+#slots-list li:last-child {
+    margin-bottom: 0;
+}
+
+#slots-list .remove-slot-btn {
+    padding: 4px 8px;
+    background-color: #dc3545; /* Red for remove */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-left: 10px;
+    transition: background-color 0.2s;
+}
+
+#slots-list .remove-slot-btn:hover {
+    background-color: #c82333;
+}
+
+#save-status {
+    margin-top: 10px;
+    font-style: italic;
+    color: #6c757d; /* Default status color */
+}
+
+#save-status.success {
+    color: #28a745; /* Green for success */
+}
+
+#save-status.error {
+    color: #dc3545; /* Red for error */
+}
+
+/* --- Scheduled Calls Styles --- */
+
+#scheduled-calls {
+    background-color: #f8f9fa;
+    border-top: 3px solid #17a2b8; /* Info color */
+}
+
+#scheduled-calls p {
+    margin-bottom: 15px;
+    color: #555;
+}
+
+.scheduled-calls-list h3 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+#booked-calls-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+    max-height: 400px; /* Limit height */
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+#booked-calls-list li {
+    background-color: #f1f1f1;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    border-left: 4px solid #17a2b8; /* Indicate booked call */
+}
+
+#booked-calls-list li:last-child {
+    margin-bottom: 0;
+}
+
+#booked-calls-list .view-details-btn {
+    padding: 4px 8px;
+    background-color: #007bff; /* Primary color for view */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-left: 10px;
+    transition: background-color 0.2s;
+}
+
+#booked-calls-list .view-details-btn:hover {
+    background-color: #0056b3;
+}
+
+.booking-actions { /* Container for buttons in the list item */
+    display: flex;
+    gap: 8px; /* Space between buttons */
+    align-items: center;
+}
+
+.cancel-booking-btn {
+    padding: 4px 8px;
+    background-color: #dc3545; /* Red for cancel/delete */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.2s;
+}
+
+.cancel-booking-btn:hover {
+    background-color: #c82333;
+}
+
+
+#booking-details-view {
+    border: 1px solid #ced4da;
+    background-color: #e9ecef;
+}
+
+#booking-details-view h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #495057;
+}
+
+#booking-details-content {
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: #333;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+#close-details-view-btn {
+    padding: 5px 10px;
+    background-color: #6c757d; /* Secondary color */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.2s;
+}
+
+#close-details-view-btn:hover {
+    background-color: #5a6268;
+}

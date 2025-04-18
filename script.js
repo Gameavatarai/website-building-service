@@ -1,7 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const carousel = document.querySelector('.carousel-3d');
     const scene = document.querySelector('.scene');
-    if (!carousel || !scene) return;
+    // Exit if carousel elements aren't found on the current page
+    if (!carousel || !scene) {
+        // console.log("Carousel elements not found on this page."); // Optional debug log
+        return;
+    }
 
     const cards = carousel.querySelectorAll('.carousel-card-3d');
     const numCards = cards.length;
@@ -170,8 +174,9 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const quickAccess = document.querySelector('.quick-access');
     
+    // Exit if quick access element isn't found on the current page
     if (!quickAccess) {
-        console.error("Quick Access element not found!");
+        // console.log("Quick Access element not found on this page."); // Optional debug log
         return;
     }
     
@@ -205,6 +210,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Add tooltips for navigation items
+    const quickItems = document.querySelectorAll('.quick-item');
+    quickItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            if (isMenuVisible) {
+                const action = item.getAttribute('data-action');
+                let tooltipText = '';
+                
+                // Set tooltip text based on action
+                switch(action) {
+                    case 'home':
+                        tooltipText = 'Home';
+                        break;
+                    case 'portfolio':
+                        tooltipText = 'AI Elements';
+                        break;
+                    case 'contact':
+                        tooltipText = 'Contact Us';
+                        break;
+                    case 'ai-details':
+                        tooltipText = 'AI Details';
+                        break;
+                    case 'about':
+                        tooltipText = 'About Us';
+                        break;
+                    case 'models':
+                        tooltipText = 'Pricing Models';
+                        break;
+                    case 'thank-you':
+                        tooltipText = 'Thank You';
+                        break;
+                    default:
+                        tooltipText = action.charAt(0).toUpperCase() + action.slice(1);
+                }
+                
+                // Set tooltip text and show it
+                quickAccess.setAttribute('data-tooltip', tooltipText);
+                quickAccess.classList.add('show-tooltip');
+            }
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            // Hide tooltip when mouse leaves the item
+            quickAccess.classList.remove('show-tooltip');
+        });
+    });
+    
     // We're removing the mousemove handler so the menu stays in place
     // This allows the user to hover over menu items
     
@@ -229,8 +281,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = 'portfolio.html';
                 } else if (action === 'contact') {
                     window.location.href = 'contact.html';
-                } else if (action === 'ai-details') { // Added navigation for AI details
+                } else if (action === 'ai-details') {
                     window.location.href = 'ai-details.html';
+                } else if (action === 'about') {
+                    window.location.href = 'about.html';
+                } else if (action === 'models') {
+                    window.location.href = 'models.html';
+                } else if (action === 'thank-you') {
+                    window.location.href = 'thank-you.html';
                 }
             }
             
@@ -250,4 +308,390 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
         }
     });
+});
+
+
+// --- Booking & Chatbot Shared Elements & Functions ---
+
+// Popup Elements (Define globally or in a shared scope accessible by both listeners)
+const calendarPopupOverlay = document.getElementById('calendar-popup-overlay');
+const calendarPopup = document.getElementById('calendar-popup');
+const closeCalendarPopupButton = calendarPopup?.querySelector('.close-popup');
+const calendarSlotsContainer = document.getElementById('calendar-slots');
+const callTypeSelect = document.getElementById('call-type');
+
+const bookingPopupOverlay = document.getElementById('booking-popup-overlay');
+const bookingPopup = document.getElementById('booking-popup');
+const closeBookingPopupButton = bookingPopup?.querySelector('.close-popup');
+const bookingForm = document.getElementById('booking-form');
+const selectedSlotDisplay = document.getElementById('selected-slot-display');
+const selectedCallTypeDisplay = document.getElementById('selected-call-type-display');
+
+// Hidden form fields
+const hiddenDateField = document.getElementById('selected-date');
+const hiddenTimeField = document.getElementById('selected-time');
+const hiddenCallTypeField = document.getElementById('selected-call-type');
+
+// Constants
+const SLOTS_STORAGE_KEY = 'booking_available_slots';
+const BOOKINGS_STORAGE_KEY = 'bookingSubmissions';
+
+
+// --- Calendar Popup Functions --- (Now globally accessible)
+function openCalendarPopup() {
+    if (!calendarPopup || !calendarPopupOverlay) return;
+    loadAndDisplayAvailableSlots(); // Load/refresh slots when opening
+    calendarPopupOverlay.style.display = 'block';
+    calendarPopup.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCalendarPopup() {
+    if (!calendarPopup || !calendarPopupOverlay) return;
+    calendarPopupOverlay.style.display = 'none';
+    calendarPopup.style.display = 'none';
+    // Only restore scroll if the other popup isn't also open
+    if (bookingPopup && bookingPopup.style.display === 'none') { // Check bookingPopup exists
+        document.body.style.overflow = '';
+    }
+}
+
+// --- Booking Details Popup Functions --- (Now globally accessible)
+function openBookingPopup(dateTimeISO) {
+    // Ensure all required elements exist
+    if (!bookingPopup || !bookingPopupOverlay || !callTypeSelect || !selectedSlotDisplay || !selectedCallTypeDisplay || !hiddenDateField || !hiddenTimeField || !hiddenCallTypeField) {
+        console.error("Booking details popup elements not found!");
+        return;
+    }
+
+    const selectedDate = new Date(dateTimeISO);
+    const selectedCallTypeValue = callTypeSelect.value; // Get value from select inside calendar popup
+    const selectedCallTypeText = callTypeSelect.options[callTypeSelect.selectedIndex].text;
+
+    // --- Payment Check for Inspiring Call ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentSuccess = urlParams.get('payment_success') === 'true';
+    const stripePaymentUrl = 'https://buy.stripe.com/dR68xrcHv6qNh0I28j'; // Your Stripe Link
+
+    if (selectedCallTypeValue === 'inspiring' && !paymentSuccess) {
+        // Inspiring Call selected, but payment not yet confirmed via URL param
+        console.log("Inspiring Call selected. Redirecting to payment...");
+        try {
+            // Store details needed after redirect
+            sessionStorage.setItem('pendingBookingSlot', dateTimeISO);
+            sessionStorage.setItem('pendingBookingCallType', selectedCallTypeValue);
+            // Redirect to Stripe
+            window.location.href = stripePaymentUrl;
+        } catch (error) {
+            console.error("Error using sessionStorage:", error);
+            alert("Could not initiate payment process. Please try again or contact support.");
+        }
+        return; // Stop further execution in this case
+    }
+    // --- End Payment Check ---
+
+    // Close the calendar popup first (if open)
+    closeCalendarPopup();
+
+    // Populate display elements
+    selectedSlotDisplay.textContent = selectedDate.toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'short', hour12: false });
+    selectedCallTypeDisplay.textContent = selectedCallTypeText;
+
+    // Populate hidden form fields
+    hiddenDateField.value = selectedDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    hiddenTimeField.value = selectedDate.toTimeString().split(' ')[0].substring(0, 5); // HH:MM
+    hiddenCallTypeField.value = selectedCallTypeValue;
+
+    // Show popup
+    bookingPopupOverlay.style.display = 'block';
+    bookingPopup.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Ensure background scrolling is prevented
+}
+
+function closeBookingPopup() {
+    if (!bookingPopup || !bookingPopupOverlay) return;
+    bookingPopupOverlay.style.display = 'none';
+    bookingPopup.style.display = 'none';
+    if (bookingForm) bookingForm.reset(); // Reset form fields
+    // Only restore scroll if the other popup isn't also open (though calendar should be closed already)
+    if (calendarPopup && calendarPopup.style.display === 'none') { // Check calendarPopup exists
+         document.body.style.overflow = '';
+    }
+}
+
+// --- Slot Loading & Display (inside Calendar Popup) --- (Now globally accessible)
+function loadAndDisplayAvailableSlots() {
+    // Ensure elements inside the calendar popup exist
+    if (!calendarSlotsContainer || !calendarPopup) return;
+
+    const storedSlots = localStorage.getItem(SLOTS_STORAGE_KEY);
+    let availableSlots = [];
+
+    if (storedSlots) {
+        try {
+            availableSlots = JSON.parse(storedSlots);
+            if (!Array.isArray(availableSlots)) {
+                availableSlots = [];
+            }
+            availableSlots.sort(); // Sort chronologically
+        } catch (error) {
+            console.error("Error parsing available slots:", error);
+            availableSlots = [];
+        }
+    }
+
+    calendarSlotsContainer.innerHTML = ''; // Clear previous slots
+
+    if (availableSlots.length === 0) {
+        calendarSlotsContainer.innerHTML = '<p>No available time slots at the moment.</p>';
+        return;
+    }
+
+    // Filter out past slots (optional but good practice)
+    const now = new Date();
+    const futureSlots = availableSlots.filter(slotISO => new Date(slotISO) > now);
+
+    if (futureSlots.length === 0) {
+        calendarSlotsContainer.innerHTML = '<p>No available future time slots.</p>';
+        return;
+    }
+
+
+    futureSlots.forEach(slotISO => {
+        const slotButton = document.createElement('button');
+        slotButton.className = 'time-slot';
+        slotButton.dataset.datetime = slotISO;
+
+        const date = new Date(slotISO);
+        slotButton.textContent = date.toLocaleString('en-GB', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: false // Use 24-hour format
+        });
+
+        slotButton.addEventListener('click', () => {
+            openBookingPopup(slotISO); // Call the global function
+        });
+
+        calendarSlotsContainer.appendChild(slotButton);
+    });
+}
+
+// --- Helper function to remove slot from availability --- (Now globally accessible)
+function removeSlotFromAvailability(slotToRemoveISO) {
+    const storedSlots = localStorage.getItem(SLOTS_STORAGE_KEY);
+    let availableSlots = [];
+    if (storedSlots) {
+        try {
+            availableSlots = JSON.parse(storedSlots);
+            if (!Array.isArray(availableSlots)) availableSlots = [];
+        } catch {
+            availableSlots = [];
+        }
+    }
+
+    // Filter out the booked slot
+    const updatedSlots = availableSlots.filter(slot => slot !== slotToRemoveISO);
+
+    // Save the updated list back to localStorage
+    localStorage.setItem(SLOTS_STORAGE_KEY, JSON.stringify(updatedSlots));
+    console.log(`Removed slot ${slotToRemoveISO} from availability.`);
+}
+
+
+// --- Booking System Event Listener Setup ---
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- Check for Payment Success Redirect ---
+    const urlParamsOnLoad = new URLSearchParams(window.location.search);
+    if (urlParamsOnLoad.get('payment_success') === 'true') {
+        console.log("Payment success detected on page load.");
+        try {
+            const pendingSlot = sessionStorage.getItem('pendingBookingSlot');
+            const pendingCallType = sessionStorage.getItem('pendingBookingCallType');
+
+            if (pendingSlot && pendingCallType === 'inspiring') {
+                console.log("Found pending booking details in sessionStorage. Opening booking form.");
+                // Need to temporarily set the callTypeSelect value if it exists,
+                // as openBookingPopup reads it directly.
+                if (callTypeSelect) {
+                    callTypeSelect.value = pendingCallType; // Ensure 'inspiring' is selected
+                }
+                openBookingPopup(pendingSlot); // Open the booking form directly
+
+                // Clean up sessionStorage
+                sessionStorage.removeItem('pendingBookingSlot');
+                sessionStorage.removeItem('pendingBookingCallType');
+
+                // Clean up URL (optional, keeps URL clean)
+                if (window.history.replaceState) {
+                    const cleanUrl = window.location.pathname + window.location.hash; // Remove query string
+                    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+                }
+            } else {
+                console.log("Payment success flag found, but no pending booking details in sessionStorage.");
+                // Optionally clear the flag from URL anyway
+                 if (window.history.replaceState) {
+                    const cleanUrl = window.location.pathname + window.location.hash;
+                    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+                }
+            }
+        } catch (error) {
+            console.error("Error processing payment success redirect:", error);
+        }
+    }
+    // --- End Payment Success Check ---
+
+
+    // Get buttons inside this scope
+    const openCalendarBtnInspiring = document.getElementById('open-calendar-popup-btn'); // Inspiring Call section
+    const openCalendarBtnLetsGo = document.getElementById('open-calendar-popup-btn-letsgo'); // Let's Go Call section
+    const openCalendarBtnCarousel = document.getElementById('open-calendar-popup-btn-carousel'); // Carousel card
+
+    // Form Submission Function (remains the same, but defined globally now)
+    function handleBookingSubmit(event) { // Keep this function definition
+        console.log("handleBookingSubmit triggered!"); // Add console log for debugging
+        event.preventDefault();
+        if (!bookingForm) { // bookingForm is global now
+            console.error("Booking form element not found in handleBookingSubmit.");
+            return;
+        }
+
+        const formData = new FormData(bookingForm);
+        // Get date and time separately first
+        const bookedDate = formData.get('selected-date');
+        const bookedTime = formData.get('selected-time');
+
+        // Construct the ISO string using the separate variables
+        const bookedSlotISO = new Date(bookedDate + 'T' + bookedTime).toISOString();
+
+        // Now create the bookingData object
+        const bookingData = {
+            callType: formData.get('selected-call-type'),
+            date: bookedDate,
+            time: bookedTime,
+            firstName: formData.get('first-name'),
+            lastName: formData.get('last-name'),
+            email: formData.get('email'),
+            company: formData.get('company') || '', // Handle optional fields
+            phone: formData.get('phone') || '',   // Handle optional fields
+            notes: formData.get('notes') || '',     // Handle optional fields
+            submissionTimestamp: new Date().toISOString(),
+            bookedSlotISO: bookedSlotISO // Use the pre-calculated ISO string
+        };
+
+        // --- Send data to Make.com Webhook ---
+        const webhookUrl = 'https://hook.eu2.make.com/jkvuy43075o4cg89hemr9vc1r7m9w1ye';
+        fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bookingData),
+        })
+        .then(response => {
+            if (!response.ok) {
+                // Log non-OK responses (like 4xx, 5xx errors)
+                console.warn(`Webhook response not OK: ${response.status} ${response.statusText}`);
+                return response.text(); // Attempt to read error body if any
+            }
+            console.log('Successfully sent data to webhook.');
+            return response.json(); // Or response.text() if Make doesn't return JSON
+        })
+        .then(data => {
+            if (data) console.log('Webhook response data:', data);
+        })
+        .catch((error) => {
+            // Log network errors or CORS issues
+            console.error('Error sending data to webhook:', error);
+            // Even if webhook fails, proceed with saving locally and redirecting
+        })
+        .finally(() => {
+            // This block executes whether the fetch succeeded or failed
+
+            // ** --- Simulate Email Sending --- ** (Keep this log for reference)
+        console.log("--- Booking Submission ---");
+        console.log("Simulating email sending to: support@gameavatarai.de");
+        console.log("Subject: New Booking Request");
+        console.log("Body:");
+        console.log(` Call Type: ${bookingData.callType === 'inspiring' ? 'Inspiring Call (50€)' : "Let's go Call"}`);
+        console.log(` Date: ${bookingData.date}`);
+        console.log(` Time: ${bookingData.time}`);
+        console.log(` Name: ${bookingData.firstName} ${bookingData.lastName}`);
+        console.log(` Email: ${bookingData.email}`);
+        if (bookingData.company) console.log(` Company: ${bookingData.company}`);
+        if (bookingData.phone) console.log(` Phone: ${bookingData.phone}`);
+        if (bookingData.notes) console.log(` Notes: ${bookingData.notes}`);
+        console.log("--------------------------");
+        // ** --- End Simulation --- **
+
+        // Save booking to localStorage
+        try {
+            let bookings = JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || '[]');
+            bookings.push(bookingData);
+            localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
+
+            // --- Remove booked slot from availability ---
+            removeSlotFromAvailability(bookingData.bookedSlotISO);
+            // --- End Remove Slot ---
+
+        } catch (error) {
+            console.error("Error saving booking to localStorage:", error);
+        }
+
+        // Close popup and show confirmation (or redirect)
+        closeBookingPopup();
+        // alert('Thank you for your booking! We will contact you shortly.');
+            // Or redirect:
+            window.location.href = 'thank-you.html?source=booking'; // Add query param if needed
+        });
+        // --- End Webhook Send ---
+
+    }
+
+    // --- Attach Event Listeners ---
+    if (openCalendarBtnInspiring) {
+        openCalendarBtnInspiring.addEventListener('click', openCalendarPopup); // Use global function
+    }
+    if (openCalendarBtnLetsGo) {
+        openCalendarBtnLetsGo.addEventListener('click', openCalendarPopup); // Use global function
+    }
+     if (openCalendarBtnCarousel) {
+        openCalendarBtnCarousel.addEventListener('click', openCalendarPopup); // Use global function
+    }
+
+    // Close Calendar Popup
+    if (closeCalendarPopupButton) { // closeCalendarPopupButton is global now
+        closeCalendarPopupButton.addEventListener('click', closeCalendarPopup); // Use global function
+    }
+    if (calendarPopupOverlay) { // calendarPopupOverlay is global now
+        calendarPopupOverlay.addEventListener('click', closeCalendarPopup); // Close on overlay click
+    }
+    if (calendarPopup) { // calendarPopup is global now
+        calendarPopup.addEventListener('click', (event) => event.stopPropagation()); // Prevent closing when clicking inside
+    }
+
+    // Close Booking Details Popup
+    if (closeBookingPopupButton) { // closeBookingPopupButton is global now
+        closeBookingPopupButton.addEventListener('click', closeBookingPopup); // Use global function
+    }
+    if (bookingPopupOverlay) { // bookingPopupOverlay is global now
+        bookingPopupOverlay.addEventListener('click', closeBookingPopup); // Close on overlay click
+    }
+    if (bookingPopup) { // bookingPopup is global now
+        bookingPopup.addEventListener('click', (event) => event.stopPropagation()); // Prevent closing when clicking inside
+    }
+
+    // Booking Form Submission
+    if (bookingForm) { // bookingForm is global now
+        bookingForm.addEventListener('submit', handleBookingSubmit); // Attach listener to global function
+    }
+
+    // Add functions to global scope for inline onclick attributes (if any remain)
+    window.closeCalendarPopup = closeCalendarPopup; // Ensure it's global if used inline
+    window.closeBookingPopup = closeBookingPopup; // Ensure it's global if used inline
+
 });

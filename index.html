@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Build Your Dream Website</title>
+    <meta name="description" content="Avatar AI Web Studios builds professional, modern, and responsive custom websites powered by AI. Get your dream website tailored for your business.">
+    <title>Avatar AI Web Studios | Custom AI-Powered Website Design</title>
     <link rel="stylesheet" href="style.css">
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
 </head>
@@ -26,21 +27,16 @@
 
     <div class="scene"> <!-- Container for 3D space -->
         <div class="carousel-3d"> <!-- The rotating ring -->
-            <div class="carousel-card-3d" id="services" data-title="Our Services"> <!-- Card 1 -->
-                <h2>Our Services</h2>
-                <ul>
-                    <li>Custom Website Design & Development</li>
-                    <li>Responsive Design (Mobile-Friendly)</li>
-                    <li>E-commerce Solutions</li>
-                    <li>Website Maintenance & Updates</li>
-                    <li>SEO Optimization</li>
-                </ul>
+            <div class="carousel-card-3d" id="pricing-card" data-title="Pricing"> <!-- Card 1 - Replaced -->
+                <h2>Pricing</h2>
+                <p>Explore our flexible pricing options designed to fit your needs, from basic packages to premium solutions.</p>
+                <a href="#spline-cards-section" class="cta-button">Go to Pricing</a> <!-- Link to pricing section -->
             </div>
 
-            <div class="carousel-card-3d" id="portfolio" data-title="Portfolio"> <!-- Card 2 -->
-                <h2>Portfolio</h2>
-                <p>Check out some of our recent projects.</p>
-                <a href="portfolio.html" class="cta-button">View Portfolio</a> <!-- Link to portfolio.html -->
+            <div class="carousel-card-3d" id="portfolio" data-title="AI Elements"> <!-- Card 2 - Renamed -->
+                <h2>AI Elements</h2>
+                <p>Check out some of our AI-driven UI elements.</p>
+                <a href="portfolio.html" class="cta-button">View AI Elements</a> <!-- Link to portfolio.html -->
             </div>
 
             <div class="carousel-card-3d" id="contact" data-title="Get in Touch"> <!-- Card 3 -->
@@ -59,21 +55,15 @@
                 </ul>
                 <a href="models.html" class="cta-button">View Models</a>
             </div>
-            <div class="carousel-card-3d" id="card5" data-title="Placeholder 5"> <!-- Card 5 -->
-                <h2>Placeholder Card 5</h2>
-                <p>More content coming soon.</p>
+            <div class="carousel-card-3d" id="about-us" data-title="About Us"> <!-- Card 5 - Replaced -->
+                <h2>About Us</h2>
+                <p>Learn more about our mission, team, and approach to building the future of the web with AI.</p>
+                <a href="about.html" class="cta-button">Learn More</a> <!-- Link to about.html -->
             </div>
-            <div class="carousel-card-3d" id="card6" data-title="Placeholder 6"> <!-- Card 6 -->
-                <h2>Placeholder Card 6</h2>
-                <p>More content coming soon.</p>
-            </div>
-            <div class="carousel-card-3d" id="card7" data-title="Placeholder 7"> <!-- Card 7 -->
-                <h2>Placeholder Card 7</h2>
-                <p>More content coming soon.</p>
-            </div>
-            <div class="carousel-card-3d" id="card8" data-title="Placeholder 8"> <!-- Card 8 -->
-                <h2>Placeholder Card 8</h2>
-                <p>More content coming soon.</p>
+            <div class="carousel-card-3d" id="card6" data-title="Book a Call"> <!-- Card 6 - Updated -->
+                <h2>Book a Call</h2>
+                <p>Ready to discuss your project? Schedule an "Inspiring Call" to explore ideas (50€) or a "Let's go Call" to dive into specifics.</p>
+                <button id="open-calendar-popup-btn-carousel" class="cta-button" style="margin-top: 1rem;">Schedule a Call</button>
             </div>
         </div> <!-- Close carousel-3d -->
     </div> <!-- Close scene -->
@@ -116,14 +106,97 @@
                 <h3>Inspiring Call</h3>
             </div>
             <div class="card">
-                <p>If you're not really care of what your website needs or have no idea of how to get started, get on a 30 Minutes Call and we'll come together to see what's best for you.</p>
-                <p>We offer the best AI Solutions for almost every branch.</p>
+                <!-- Restructured content to match other cards -->
+                <p>If you're not sure what your website needs or how to get started, let's connect! We'll explore the best options for you.</p>
+                <p>We offer tailored AI Solutions for almost every industry.</p>
+                <p>The <strong>Inspiring Call</strong> is a 30-minute Consulting Call to explore possibilities and costs 50€.</p>
+                <!-- Button moved to standard position -->
                 <div style="text-align: center; margin-top: 1rem;">
-                    <a href="contact.html" class="cta-button" style="display: inline-block; width: auto; padding: 0.5rem 1rem;">Schedule an Inspiring Call</a>
+                    <button id="open-calendar-popup-btn" class="cta-button" style="display: inline-block; width: auto; padding: 0.5rem 1rem;">Schedule an Inspiring Call</button>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Calendar Selection Popup (New) -->
+    <div id="calendar-popup-overlay" class="popup-overlay" style="display: none; z-index: 1040;"></div>
+    <div id="calendar-popup" class="popup-form" style="display: none; z-index: 1041; max-width: 600px;">
+        <span class="close-popup" onclick="closeCalendarPopup()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; font-weight: bold; color: #ccc; cursor: pointer; line-height: 1;">&times;</span>
+        <h3 style="margin-top: 0; margin-bottom: 20px; color: #00c6ff;">Schedule Your Call</h3>
+
+        <!-- Moved Booking Section Content Here -->
+        <div class="booking-container" style="margin-top: 0; border-top: none; padding-top: 0;">
+            <p><strong>Inspiring Call:</strong> A 30-minute Consulting Call (50€).</p>
+            <p><strong>Let's go Call:</strong> For discussing specific project details.</p>
+
+            <div class="call-type-selector" style="margin-bottom: 1.5rem;">
+                <label for="call-type" style="display: block; margin-bottom: 0.5rem; color: #ccc;">1. Select Call Type:</label>
+                <select id="call-type" name="call-type" style="padding: 0.7rem; border-radius: 5px; border: 1px solid #555; background-color: rgba(51, 51, 51, 0.8); color: #eee; width: 100%; font-size: 0.9rem;">
+                    <option value="inspiring">Inspiring Call (50€)</option>
+                    <option value="lets-go">Let's go Call</option>
+                </select>
+            </div>
+
+            <div class="calendar-widget">
+                <h4 style="margin-bottom: 0.8rem; color: #eee;">2. Select an available time slot:</h4>
+                <!-- Calendar UI will be generated here by JS -->
+                <div id="calendar-slots" style="min-height: 100px; background-color: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <p style="color: #aaa; width: 100%; text-align: center; font-style: italic;">Loading available times...</p>
+                    <!-- Time slots will be added here -->
+                </div>
+            </div>
+        </div>
+        <!-- End Moved Booking Section Content -->
+    </div>
+    <!-- End Calendar Selection Popup -->
+
+
+    <!-- Booking Details Form Popup (Existing - now triggered from calendar popup) -->
+    <div id="booking-popup-overlay" class="popup-overlay" style="display: none; z-index: 1050;"></div>
+    <div id="booking-popup" class="popup-form" style="display: none; z-index: 1051;">
+        <span class="close-popup" onclick="closeBookingPopup()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; font-weight: bold; color: #ccc; cursor: pointer; line-height: 1;">&times;</span>
+        <h3 style="margin-top: 0; margin-bottom: 15px; color: #00c6ff;">Enter Your Details</h3>
+        <p style="margin-bottom: 5px;">Selected Slot: <strong id="selected-slot-display" style="color: #fff;"></strong></p>
+        <p style="margin-bottom: 15px;">Call Type: <strong id="selected-call-type-display" style="color: #fff;"></strong></p>
+        <form id="booking-form">
+            <input type="hidden" id="selected-date" name="selected-date">
+            <input type="hidden" id="selected-time" name="selected-time">
+            <input type="hidden" id="selected-call-type" name="selected-call-type">
+
+            <div style="margin-bottom: 15px;">
+                <label for="first-name" style="display: block; margin-bottom: 5px; color: #ccc;">First Name: *</label>
+                <input type="text" id="first-name" name="first-name" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background-color: #333; color: #eee; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="last-name" style="display: block; margin-bottom: 5px; color: #ccc;">Last Name: *</label>
+                <input type="text" id="last-name" name="last-name" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background-color: #333; color: #eee; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="email" style="display: block; margin-bottom: 5px; color: #ccc;">Email: *</label>
+                <input type="email" id="email" name="email" required style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background-color: #333; color: #eee; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="company" style="display: block; margin-bottom: 5px; color: #ccc;">Company:</label>
+                <input type="text" id="company" name="company" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background-color: #333; color: #eee; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label for="phone" style="display: block; margin-bottom: 5px; color: #ccc;">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background-color: #333; color: #eee; box-sizing: border-box;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label for="notes" style="display: block; margin-bottom: 5px; color: #ccc;">Notes (max 1000 characters):</label>
+                <textarea id="notes" name="notes" maxlength="1000" rows="4" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background-color: #333; color: #eee; box-sizing: border-box; resize: vertical;"></textarea>
+            </div>
+
+            <button type="submit" class="cta-button" style="display: inline-block; width: auto; padding: 10px 20px;">Submit Booking</button>
+        </form>
+    </div>
+    <!-- End Booking Popup Form -->
 
     <section id="section4" class="content-section">
         <h2>You know exactly what you want? Perfect</h2>
@@ -132,33 +205,46 @@
                 <h3>Let's go Call</h3>
             </div>
             <div class="card">
-                <p>Did you put together of what you want? Or even have a clear idea of what you want your website to look like?</p>
-                <p>Then get in a booking call with us and let's work out the concept for your website. Leave the rest to us.</p>
+                <p>Did you put together what you want? Or do you have a clear idea of what your website should look like?</p>
+                <p>Then schedule a <strong>Let's go Call</strong> with us to work out the concept for your website. Leave the rest to us.</p>
+                <!-- Changed link to button triggering the popup -->
                 <div style="text-align: center; margin-top: 1rem;">
-                    <a href="contact.html" class="cta-button" style="display: inline-block; width: auto; padding: 0.5rem 1rem;">Schedule an Let's go Call</a>
+                    <button id="open-calendar-popup-btn-letsgo" class="cta-button" style="display: inline-block; width: auto; padding: 0.5rem 1rem;">Schedule a Let's go Call</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- New Section for Spline-Style Cards -->
+    <!-- Pricing Section (Previously Spline-Style Cards) -->
     <section id="spline-cards-section" class="content-section">
-        <h2>Featured Elements</h2> <!-- Or a more relevant title -->
+        <h2>Pricing</h2> <!-- Changed Headline -->
         <div class="spline-cards-container">
             <div class="spline-card">
-                <h3>Card 1 Title</h3>
-                <p>Description for card 1.</p>
-                <a href="#" class="cta-button">Learn More</a>
+                <h3>Basic</h3> <!-- Changed Card 1 Headline -->
+                <ul> <!-- Changed p to ul -->
+                    <li>Starting at 500€</li>
+                    <li>Includes all items listed in Basic</li>
+                    <li>Additional features available</li>
+                </ul>
+                <a href="models.html" class="cta-button">See details</a> <!-- Changed Button Text & Link -->
             </div>
             <div class="spline-card">
-                <h3>Card 2 Title</h3>
-                <p>Description for card 2.</p>
-                <a href="#" class="cta-button">Learn More</a>
+                <h3>Professional</h3> <!-- Changed Card 2 Headline -->
+                <ul> <!-- Changed p to ul -->
+                    <li>Starting at 1.000€</li>
+                    <li>Includes all items listed in Professional</li>
+                    <li>Additional features available</li>
+                </ul>
+                <a href="models.html" class="cta-button">See Details</a> <!-- Changed Button Text & Link -->
             </div>
             <div class="spline-card">
-                <h3>Card 3 Title</h3>
-                <p>Description for card 3.</p>
-                <a href="#" class="cta-button">Learn More</a>
+                <h3>Premium</h3> <!-- Changed Card 3 Headline -->
+                <ul> <!-- Changed p to ul -->
+                    <li>Starting at 2.500€</li>
+                    <li>Includes all items listed in Premium</li>
+                    <li>Additional features available</li>
+                </ul>
+                <a href="models.html" class="cta-button">See Details</a> <!-- Changed Button Text & Link -->
             </div>
         </div>
     </section>
@@ -182,11 +268,14 @@
 
     <!-- Footer removed -->
     <script src="script.js"></script> <!-- Link the JavaScript file -->
+
 <div class="quick-access">
     <div class="quick-item" data-action="home">⌂</div>
     <div class="quick-item" data-action="portfolio">□</div>
     <div class="quick-item" data-action="contact">✉</div>
     <div class="quick-item" data-action="ai-details">AI</div>
+    <div class="quick-item" data-action="about">i</div>
+    <div class="quick-item" data-action="models">$</div>
 </div>
 
 <!-- Footer with Legal Links -->
@@ -543,6 +632,23 @@
     .close-modal:hover {
         color: #00c6ff;
     }
+    
+    /* Admin link styling */
+    .admin-link {
+        padding: 8px 15px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        color: #666;
+        font-size: 0.8rem;
+        text-decoration: none;
+        opacity: 0.6;
+    }
+    
+    .admin-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        color: #999;
+    }
 </style>
 
 <script>
@@ -592,6 +698,23 @@
         }
     });
 </script>
+    <script src="analytics-tracker.js"></script>
+    <!-- Voiceflow Chatbot Script -->
+    <script type="text/javascript">
+      (function(d, t) {
+          var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+          v.onload = function() {
+            window.voiceflow.chat.load({
+              verify: { projectID: '680184a45e86db65357218cb' },
+              url: 'https://general-runtime.voiceflow.com',
+              versionID: 'production',
+              voice: {
+                url: "https://runtime-api.voiceflow.com"
+              }
+            });
+          }
+          v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs"; v.type = "text/javascript"; s.parentNode.insertBefore(v, s);
+      })(document, 'script');
+    </script>
 </body>
-<script src="script.js"></script>
 </html>

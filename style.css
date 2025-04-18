@@ -37,11 +37,44 @@ body {
     z-index: 9999;
 }
 
+/* Tooltip for navigation circle */
+.quick-access::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    text-align: center;
+    white-space: nowrap;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.quick-access.show-tooltip::after {
+    opacity: 1;
+}
+
 .quick-item {
     position: absolute;
     width: 50px;
     height: 50px;
-    background: rgba(255, 255, 255, 0.9);
+    background: linear-gradient(
+        90deg,
+        #00c6ff 0%,
+        #ffffff 33%,
+        #a367ff 66%,
+        #00c6ff 100%
+    );
+    background-size: 300% auto;
+    animation: textGradient 8s ease infinite;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -49,19 +82,25 @@ body {
     color: black;
     font-size: 1.5em;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
 }
 
 .quick-item:hover {
     transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
 }
 
 /* Position items around the circle */
-.quick-item:nth-child(1) { transform: translateY(-80px); } /* Top */
-.quick-item:nth-child(2) { transform: translate(-70px, -30px); } /* Top-Left */
-.quick-item:nth-child(3) { transform: translate(70px, -30px); } /* Top-Right */
-.quick-item:nth-child(4) { transform: translateY(80px); } /* Bottom */
+.quick-item:nth-child(1) { transform: translateY(-80px); } /* Top - Home */
+.quick-item:nth-child(2) { transform: translate(-70px, -30px); } /* Top-Left - Portfolio */
+.quick-item:nth-child(3) { transform: translate(70px, -30px); } /* Top-Right - Contact */
+.quick-item:nth-child(4) { transform: translateY(80px); } /* Bottom - AI Details */
+.quick-item:nth-child(5) { transform: translate(-70px, 30px); } /* Bottom-Left - About */
+.quick-item:nth-child(6) { transform: translate(70px, 30px); } /* Bottom-Right - Models */
 
 /* Close the quick-access styles properly */
 /* Removed the extra closing brace added previously */
@@ -249,7 +288,7 @@ body {
 
 .carousel-card-3d {
     position: absolute;
-    width: 240px;
+    width: 400px;
     height: 340px;
     left: 5px;
     top: 5px;
@@ -1023,10 +1062,44 @@ body {
     .circle-cutout h3 {
         font-size: 1.4rem;
     }
+
+    /* --- Vertical Card Layout on Mobile --- */
+    .card-container {
+        display: flex; /* Use flexbox for vertical stacking */
+        flex-direction: column;
+        align-items: center; /* Center items horizontally */
+        height: auto; /* Allow height to adjust */
+        animation: none; /* Disable float animation on mobile */
+        transform: none; /* Reset transform */
+        perspective: none; /* Reset perspective */
+        margin-bottom: 3rem; /* Add some bottom margin */
+    }
+
+    .circle-cutout {
+        position: relative; /* Change from absolute */
+        left: auto; /* Reset left positioning */
+        top: auto; /* Reset top positioning */
+        transform: none; /* Reset transform */
+        width: 200px; /* Adjust size */
+        height: 200px;
+        margin: 0 auto 1.5rem auto; /* Center horizontally and add bottom margin */
+        z-index: 1; /* Ensure it's above card if overlap occurs */
+    }
+
+    .card {
+        position: relative; /* Change from absolute */
+        width: 100%; /* Use full width of container */
+        height: auto; /* Allow height to adjust */
+        padding: 20px; /* Reset padding */
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); /* Adjust shadow for static layout */
+        margin-top: 0; /* Remove potential top margin */
+    }
     
     .card p {
-        font-size: 0.9rem;
+        font-size: 0.9rem; /* Ensure text is readable */
+        text-align: left; /* Keep text left-aligned for readability */
     }
+    /* --- End Vertical Card Layout --- */
 }
 
 @media (max-width: 500px) {
@@ -1035,4 +1108,229 @@ body {
         height: 200px;
         left: -100px;
     }
+}
+
+/* --- Booking Section Styles --- */
+
+.booking-container {
+    margin-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 1.5rem;
+}
+
+.booking-container p {
+    text-align: left; /* Override card's justify */
+    margin-bottom: 0.8rem;
+}
+
+.booking-container strong {
+    color: #00c6ff; /* Highlight key terms */
+}
+
+.call-type-selector label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.call-type-selector select {
+    padding: 0.7rem;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: rgba(51, 51, 51, 0.8);
+    color: #eee;
+    width: 100%;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    appearance: none; /* Basic reset */
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23ccc' d='M6 8L0 2l1.4-1.4L6 5.2 10.6.6 12 2z'/%3E%3C/svg%3E"); /* Custom dropdown arrow */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px; /* Space for arrow */
+}
+
+.calendar-widget h4 {
+    margin-bottom: 0.8rem;
+    color: #eee;
+    font-size: 1.1rem;
+}
+
+#calendar-slots {
+    min-height: 100px;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#calendar-slots p { /* Style for loading/no slots message */
+    color: #aaa;
+    width: 100%;
+    text-align: center;
+    font-style: italic;
+}
+
+.time-slot {
+    background-color: rgba(0, 198, 255, 0.15);
+    border: 1px solid #00c6ff;
+    color: #e0e0e0;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-size: 0.9rem;
+}
+
+.time-slot:hover {
+    background-color: rgba(0, 198, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.time-slot:active {
+    transform: translateY(0);
+}
+
+/* --- Popup Styles (General) --- */
+
+.popup-overlay { /* Shared overlay style */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    /* z-index is set per specific overlay */
+    display: none; /* Initially hidden */
+}
+
+.popup-form { /* Shared base style for popups */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh; /* Limit height */
+    background: rgba(40, 40, 40, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 198, 255, 0.1);
+    /* z-index is set per specific popup */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 30px;
+    color: #eee;
+    display: none; /* Initially hidden */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+}
+
+.popup-form h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    color: #00c6ff;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 198, 255, 0.3);
+    padding-bottom: 10px;
+}
+
+.popup-form p {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: #ccc;
+}
+
+.popup-form p strong {
+    color: #fff;
+    font-weight: 600;
+}
+
+.popup-form form div {
+    margin-bottom: 15px;
+}
+
+.popup-form label {
+    display: block;
+    margin-bottom: 6px;
+    color: #ccc;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.popup-form input[type="text"],
+.popup-form input[type="email"],
+.popup-form input[type="tel"],
+.popup-form textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: rgba(51, 51, 51, 0.8);
+    color: #eee;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.popup-form input:focus,
+.popup-form textarea:focus {
+    outline: none;
+    border-color: #00c6ff;
+    box-shadow: 0 0 8px rgba(0, 198, 255, 0.3);
+}
+
+.popup-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.popup-form button[type="submit"] {
+    /* Use existing .cta-button styles */
+    display: inline-block;
+    width: auto;
+    padding: 10px 25px;
+    margin-top: 10px;
+}
+
+.close-popup {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #ccc;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.3s, transform 0.2s;
+}
+
+.close-popup:hover {
+    color: #00c6ff;
+    transform: rotate(90deg);
+}
+
+/* --- Specific Popup Z-Indexes --- */
+
+/* Calendar Selection Popup */
+#calendar-popup-overlay {
+    z-index: 1040;
+}
+#calendar-popup {
+    z-index: 1041;
+    max-width: 600px; /* Allow slightly wider for calendar */
+}
+
+/* Booking Details Form Popup */
+#booking-popup-overlay {
+    z-index: 1050; /* Higher z-index */
+}
+#booking-popup {
+    z-index: 1051; /* Higher z-index */
 }

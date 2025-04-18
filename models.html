@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Models - Website Building</title>
+    <meta name="description" content="Explore website packages from Avatar AI Web Studios. Choose from Basic, Professional, and Premium models, plus additional AI features for your custom website.">
+    <title>Website Packages & Pricing Models | Avatar AI Web Studios</title>
     <link rel="stylesheet" href="style.css">
     <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
     <style>
@@ -90,6 +91,21 @@
             transform: scale(1.05);
             filter: brightness(1.1);
         }
+
+        /* Style for the full-width additional card */
+        .additional-card {
+            flex-basis: 100%; /* Make it take the full width */
+            max-width: 100%; /* Allow it to expand fully */
+            margin-top: 2rem; /* Add some space above it */
+        }
+
+        /* Optional: Adjust list layout for wider card if needed */
+        .additional-card ul {
+            /* Example: Use columns for better layout on wide card */
+            /* column-count: 2; */
+            /* column-gap: 2rem; */
+        }
+
     </style>
 </head>
 <body>
@@ -99,9 +115,10 @@
             <h2>Basic</h2>
             <ul>
                 <li>Single Page Website</li>
-                <li>3 Content Sections</li>
+                <li>5 Content Sections</li>
                 <li>Basic SEO Setup</li>
                 <li>Mobile Responsive</li>
+                <li>Simple AI Elements</li>
                 <li>Contact Form</li>
                 <li>1 Round of Revisions</li>
             </ul>
@@ -115,8 +132,7 @@
                 <li>Advanced SEO Optimization</li>
                 <li>Mobile Responsive</li>
                 <li>Contact Form</li>
-                <li>Blog Integration</li>
-                <li>Social Media Integration</li>
+                <li>Advanced AI Elements</li>
                 <li>3 Rounds of Revisions</li>
             </ul>
         </div>
@@ -129,11 +145,25 @@
                 <li>Premium SEO Package</li>
                 <li>Mobile Responsive</li>
                 <li>Advanced Contact Forms</li>
-                <li>E-commerce Integration</li>
-                <li>Blog & Social Media</li>
+                <li>Custom AI Elements</li>
+                <li>Custom AI Integrations</li>
                 <li>Analytics Dashboard</li>
                 <li>Unlimited Revisions</li>
                 <li>Priority Support</li>
+            </ul>
+        </div>
+
+        <!-- New Additional Card -->
+        <div class="model-card additional-card">
+            <h2>Additional</h2>
+            <ul>
+                <li>Simple Chatbot</li>
+                <li>Advanced Chatbot</li>
+                <li>Dynamic Carousel Element</li>
+                <li>Additional Pages</li>
+                <li>Additional Sections</li>
+                <li>AI Functions</li>
+                <li>AI Integrations</li>
             </ul>
         </div>
     </div>
@@ -146,7 +176,27 @@
     <div class="quick-item" data-action="portfolio">□</div>
     <div class="quick-item" data-action="contact">✉</div>
     <div class="quick-item" data-action="ai-details">AI</div>
+    <div class="quick-item" data-action="about">i</div>
+    <div class="quick-item" data-action="models">$</div>
 </div>
+    <script src="script.js"></script>
+    <script src="analytics-tracker.js"></script>
+    <!-- Voiceflow Chatbot Script -->
+    <script type="text/javascript">
+      (function(d, t) {
+          var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+          v.onload = function() {
+            window.voiceflow.chat.load({
+              verify: { projectID: '680184a45e86db65357218cb' },
+              url: 'https://general-runtime.voiceflow.com',
+              versionID: 'production',
+              voice: {
+                url: "https://runtime-api.voiceflow.com"
+              }
+            });
+          }
+          v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs"; v.type = "text/javascript"; s.parentNode.insertBefore(v, s);
+      })(document, 'script');
+    </script>
 </body>
-<script src="script.js"></script>
 </html>

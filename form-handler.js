@@ -46,11 +46,11 @@ exports.handler = async (event, context) => {
 
   // 4. Save Data (Example: Send to Make.com Webhook)
   // *** IMPORTANT: Replace with your NEW webhook URL, preferably using Netlify environment variables ***
-  const webhookUrl = 'https://hook.eu2.make.com/YOUR_NEW_WEBHOOK_URL';
+  const webhookUrl = 'https://hook.eu2.make.com/a2lmal9dw867mpzzhtjo1zdb2lyng8rn';
   // Example using environment variable (set this in Netlify UI):
   // const webhookUrl = process.env.PLANNING_FORM_WEBHOOK_URL;
 
-  if (!webhookUrl || webhookUrl === 'https://hook.eu2.make.com/YOUR_NEW_WEBHOOK_URL') {
+  if (!webhookUrl || webhookUrl === 'hhttps://hook.eu2.make.com/a2lmal9dw867mpzzhtjo1zdb2lyng8rn') {
       console.error("Webhook URL is not configured!");
       // Decide how to handle this - maybe still redirect but log error?
       // For now, we'll log and proceed to redirect.

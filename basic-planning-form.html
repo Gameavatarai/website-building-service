@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Planning Form - Basic</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to main stylesheet for consistency -->
+    <style>
+        /* Styles specific to this form, potentially overriding some from style.css */
+        body {
+            background-color: #1a1a1a; /* Dark background */
+            color: #e0e0e0; /* Light text */
+            font-family: sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 20px;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #00c6ff; /* Brand color */
+        }
+
+        .header h1 {
+             background: linear-gradient(
+                90deg,
+                #00c6ff 0%,
+                #ffffff 33%,
+                #a367ff 66%,
+                #00c6ff 100%
+            );
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGradient 8s ease infinite;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00c6ff;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 198, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #ccc;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: rgba(51, 51, 51, 0.8);
+            color: #eee;
+            font-size: 0.95rem;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .color-input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .color-input-group label {
+            width: 120px; /* Fixed width for alignment */
+            margin-bottom: 0; /* Override default label margin */
+        }
+
+        input[type="color"] {
+            width: 50px;
+            height: 30px;
+            border: none;
+            border-radius: 4px;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .color-code {
+            width: 100px;
+        }
+
+        .submit-button {
+            /* Use existing .cta-button styles */
+            display: inline-block;
+            background: linear-gradient(
+                90deg,
+                #00c6ff 0%,
+                #ffffff 33%,
+                #a367ff 66%,
+                #00c6ff 100%
+            );
+            background-size: 300% auto;
+            animation: textGradient 8s ease infinite;
+            padding: 10px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+            font-size: 1rem;
+            color: #000000;
+            text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .submit-button:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+        }
+         .required::after {
+            content: " *";
+            color: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="header">
+            <div class="logo">Avatar AI Web Studios</div>
+            <div>by Game Avatar AI</div>
+            <h1>Website Planning Form (Basic)</h1>
+            <p>Please complete this form before our "Let's go Call"</p>
+        </div>
+
+        <form id="planning-form" method="POST"> <!-- Action will be set by JS -->
+            <!-- Hidden fields for booking data -->
+            <input type="hidden" id="form-type" name="form-type" value="basic">
+            <input type="hidden" id="selected-date" name="selected-date">
+            <input type="hidden" id="selected-time" name="selected-time">
+            <input type="hidden" id="selected-call-type" name="selected-call-type">
+            <input type="hidden" id="selected-package" name="selected-package">
+            <input type="hidden" id="booking-first-name" name="booking-first-name">
+            <input type="hidden" id="booking-last-name" name="booking-last-name">
+            <input type="hidden" id="booking-email" name="booking-email">
+            <input type="hidden" id="booking-company" name="booking-company">
+            <input type="hidden" id="booking-phone" name="booking-phone">
+            <input type="hidden" id="booking-notes" name="booking-notes">
+
+            <div class="form-section">
+                <div class="section-title">Company Data</div>
+
+                <div class="form-group">
+                    <label for="company-name" class="required">Company Name</label>
+                    <input type="text" id="company-name" name="company-name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="legal-notice">Legal Notice</label>
+                    <textarea id="legal-notice" name="legal-notice" rows="3" placeholder="Enter your company's legal notice / Impressum details"></textarea>
+                </div>
+
+                <!-- Contact details are pre-filled from booking, shown for confirmation -->
+                 <div class="form-group">
+                    <label>Contact Person (from booking)</label>
+                    <p><strong id="display-name"></strong> (<span id="display-email"></span>)</p>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="section-title">Website Details</div>
+
+                <div class="form-group">
+                    <label>Color Palette (up to 3 colors)</label>
+
+                    <div class="color-input-group">
+                        <label for="color1">Primary Color:</label>
+                        <input type="color" id="color1" name="color1" value="#4a86e8">
+                        <input type="text" class="color-code" id="color1-code" value="#4a86e8">
+                    </div>
+
+                    <div class="color-input-group">
+                        <label for="color2">Secondary Color:</label>
+                        <input type="color" id="color2" name="color2" value="#ffffff">
+                        <input type="text" class="color-code" id="color2-code" value="#ffffff">
+                    </div>
+
+                    <div class="color-input-group">
+                        <label for="color3">Accent Color:</label>
+                        <input type="color" id="color3" name="color3" value="#ff9900">
+                        <input type="text" class="color-code" id="color3-code" value="#ff9900">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="website-purpose">Website Purpose</label>
+                    <textarea id="website-purpose" name="website-purpose" rows="3" placeholder="What is the main purpose of your website? (e.g., generate leads, sell products, provide information)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="target-audience">Target Audience</label>
+                    <textarea id="target-audience" name="target-audience" rows="3" placeholder="Briefly describe your ideal customer or website visitor."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="key-features">Key Features</label>
+                    <textarea id="key-features" name="key-features" rows="3" placeholder="List the most important features or sections you want on your website (e.g., contact form, gallery, blog)."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="existing-website">Existing Website URL (if any)</label>
+                    <input type="text" id="existing-website" name="existing-website" placeholder="https://www.yourwebsite.com">
+                </div>
+            </div>
+
+             <div class="form-group" style="text-align: center;">
+                 <button type="submit" class="submit-button">Submit Planning Information</button>
+             </div>
+        </form>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for completing this form. We look forward to our consultation call.</p>
+        <p>© 2025 Avatar AI Web Studios by Game Avatar AI</p>
+    </div>
+
+    <script>
+        // Update color code inputs when color picker changes
+        document.getElementById('color1').addEventListener('input', function() {
+            document.getElementById('color1-code').value = this.value;
+        });
+        document.getElementById('color2').addEventListener('input', function() {
+            document.getElementById('color2-code').value = this.value;
+        });
+        document.getElementById('color3').addEventListener('input', function() {
+            document.getElementById('color3-code').value = this.value;
+        });
+
+        // Update color picker when code is changed manually
+        document.getElementById('color1-code').addEventListener('input', function() {
+            document.getElementById('color1').value = this.value;
+        });
+        document.getElementById('color2-code').addEventListener('input', function() {
+            document.getElementById('color2').value = this.value;
+        });
+         document.getElementById('color3-code').addEventListener('input', function() {
+            document.getElementById('color3').value = this.value;
+        });
+
+        // Populate hidden fields and display info from URL parameters
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const form = document.getElementById('planning-form');
+
+            // Set form action (replace with your actual form handler endpoint)
+            form.action = '/.netlify/functions/form-handler'; // Example endpoint
+
+            // Populate hidden fields
+            document.getElementById('selected-date').value = urlParams.get('date') || '';
+            document.getElementById('selected-time').value = urlParams.get('time') || '';
+            document.getElementById('selected-call-type').value = urlParams.get('callType') || '';
+            document.getElementById('selected-package').value = urlParams.get('package') || '';
+            document.getElementById('booking-first-name').value = urlParams.get('firstName') || '';
+            document.getElementById('booking-last-name').value = urlParams.get('lastName') || '';
+            document.getElementById('booking-email').value = urlParams.get('email') || '';
+            document.getElementById('booking-company').value = urlParams.get('company') || '';
+            document.getElementById('booking-phone').value = urlParams.get('phone') || '';
+            document.getElementById('booking-notes').value = urlParams.get('notes') || '';
+
+             // Pre-fill company name if available from booking
+            const bookingCompany = urlParams.get('company');
+            if (bookingCompany) {
+                document.getElementById('company-name').value = bookingCompany;
+            }
+
+            // Display confirmation name/email
+            document.getElementById('display-name').textContent = (urlParams.get('firstName') || '') + ' ' + (urlParams.get('lastName') || '');
+            document.getElementById('display-email').textContent = urlParams.get('email') || '';
+
+        });
+    </script>
+</body>
+</html>

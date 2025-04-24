@@ -1396,6 +1396,48 @@ body {
     --animation-speed: 4s;
     --animation-intensity-min: 0.8;
     --animation-intensity-max: 1.2;
+    cursor: pointer; /* Show pointer cursor on hover */
+    position: relative; /* For tooltip positioning */
+}
+
+/* Logo tooltip */
+.logo-container::after {
+    content: "Avatar AI Web Studios";
+    position: absolute;
+    top: 110%; /* Position below the logo */
+    left: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: transparent; /* Text is transparent to show gradient */
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+    transform: translateY(10px);
+    z-index: 101;
+    background-clip: text;
+    -webkit-background-clip: text;
+    background-image: linear-gradient(
+        90deg,
+        #00c6ff 0%,
+        #ffffff 33%,
+        #a367ff 66%,
+        #00c6ff 100%
+    );
+    background-size: 300% auto;
+    animation: textGradient 8s ease infinite;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Show tooltip on hover */
+.logo-container:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 .logo {

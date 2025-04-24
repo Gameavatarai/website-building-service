@@ -535,13 +535,30 @@ document.addEventListener('DOMContentLoaded', () => {
     function initializeBookingAvailability() {
         if (!isAuthenticated || !addSlotBtn || !saveSlotsBtn) return; // Check elements exist
 
-        loadAvailableSlots(); // Load from localStorage
-        renderAvailableSlots(); // Display them
+        // Check if AirtableAPI is available
+        if (window.AirtableAPI) {
+            // Use Airtable API to fetch slots
+            window.AirtableAPI.fetchAvailableSlots()
+                .then(slots => {
+                    availableSlots = slots;
+                    renderAvailableSlots();
+                })
+                .catch(error => {
+                    console.error('Error fetching slots from Airtable:', error);
+                    loadAvailableSlotsFromLocalStorage(); // Fallback to localStorage
+                    renderAvailableSlots();
+                });
+        } else {
+            // Fallback to localStorage if Airtable API is not available
+            loadAvailableSlotsFromLocalStorage();
+            renderAvailableSlots();
+        }
+        
         setupBookingEventListeners(); // Add button listeners
     }
 
-    function loadAvailableSlots() {
-        // This function now just loads the data into the availableSlots array
+    function loadAvailableSlotsFromLocalStorage() {
+        // This function loads data from localStorage as a fallback
         const storedSlots = localStorage.getItem(SLOTS_STORAGE_KEY);
         if (storedSlots) {
             try {
@@ -624,32 +641,92 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        availableSlots.push(newSlotISO);
-        availableSlots.sort(); // Keep the definition array sorted
-        renderAvailableSlots(); // Re-render the list of available (unbooked) slots
-        newSlotInput.value = ''; // Clear input
-        if(saveStatus) {
-            saveStatus.textContent = 'Slot definition added. Remember to save changes.';
-            saveStatus.className = ''; // Reset status style
+        // Check if AirtableAPI is available
+        if (window.AirtableAPI) {
+            // Use Airtable API to create the slot
+            window.AirtableAPI.createTimeSlot(newSlotISO)
+                .then(record => {
+                    availableSlots.push(newSlotISO);
+                    availableSlots.sort(); // Keep the definition array sorted
+                    renderAvailableSlots(); // Re-render the list of available (unbooked) slots
+                    newSlotInput.value = ''; // Clear input
+                    if(saveStatus) {
+                        saveStatus.textContent = 'Slot added to Airtable successfully!';
+                        saveStatus.className = 'success';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error creating slot in Airtable:', error);
+                    if(saveStatus) {
+                        saveStatus.textContent = 'Error adding slot to Airtable. See console.';
+                        saveStatus.className = 'error';
+                    }
+                });
+        } else {
+            // Fallback to localStorage if Airtable API is not available
+            availableSlots.push(newSlotISO);
+            availableSlots.sort(); // Keep the definition array sorted
+            renderAvailableSlots(); // Re-render the list of available (unbooked) slots
+            newSlotInput.value = ''; // Clear input
+            if(saveStatus) {
+                saveStatus.textContent = 'Slot definition added. Remember to save changes.';
+                saveStatus.className = ''; // Reset status style
+            }
         }
     }
 
     function removeSlotDefinition(slotISO) {
-        // Removes the slot definition from the main list, regardless of booking status
-        availableSlots = availableSlots.filter(slot => slot !== slotISO);
-        renderAvailableSlots(); // Re-render the list
-         if(saveStatus) {
-            saveStatus.textContent = 'Slot definition removed. Remember to save changes.';
-            saveStatus.className = ''; // Reset status style
+        // Check if AirtableAPI is available
+        if (window.AirtableAPI) {
+            // Use Airtable API to delete the slot
+            window.AirtableAPI.deleteTimeSlot(slotISO)
+                .then(success => {
+                    // Remove from local array after successful deletion
+                    availableSlots = availableSlots.filter(slot => slot !== slotISO);
+                    renderAvailableSlots(); // Re-render the list
+                    if(saveStatus) {
+                        saveStatus.textContent = 'Slot removed from Airtable successfully!';
+                        saveStatus.className = 'success';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting slot from Airtable:', error);
+                    if(saveStatus) {
+                        saveStatus.textContent = 'Error removing slot from Airtable. See console.';
+                        saveStatus.className = 'error';
+                    }
+                });
+        } else {
+            // Fallback to localStorage if Airtable API is not available
+            availableSlots = availableSlots.filter(slot => slot !== slotISO);
+            renderAvailableSlots(); // Re-render the list
+            if(saveStatus) {
+                saveStatus.textContent = 'Slot definition removed. Remember to save changes.';
+                saveStatus.className = ''; // Reset status style
+            }
         }
     }
 
     function saveSlotsToLocalStorage() {
-        // Saves the *entire list* of defined available slots
+        // This function is now only used as a fallback when Airtable API is not available
         if (!saveStatus) return;
+        
+        // If AirtableAPI is available, we don't need to save to localStorage
+        // as each add/remove operation is already synced with Airtable
+        if (window.AirtableAPI) {
+            saveStatus.textContent = 'All changes are automatically saved to Airtable!';
+            saveStatus.className = 'success';
+            setTimeout(() => {
+                saveStatus.textContent = '';
+                saveStatus.className = '';
+            }, 4000);
+            return;
+        }
+        
+        // Fallback to localStorage if Airtable API is not available
         try {
             localStorage.setItem(SLOTS_STORAGE_KEY, JSON.stringify(availableSlots));
-            saveStatus.textContent = 'Availability definitions saved successfully!';
+            saveStatus.textContent = 'Availability definitions saved successfully to localStorage!';
             saveStatus.className = 'success';
         } catch (error) {
             console.error('Error saving slot definitions to localStorage:', error);
@@ -723,12 +800,32 @@ document.addEventListener('DOMContentLoaded', () => {
     function initializeScheduledCalls() {
         if (!isAuthenticated || !bookedCallsList) return;
 
-        loadBookedCalls();
-        renderBookedCalls();
-        // Event listeners for details buttons are added during render
+        // Check if AirtableAPI is available
+        if (window.AirtableAPI) {
+            // Use Airtable API to fetch bookings
+            window.AirtableAPI.fetchBookings()
+                .then(bookings => {
+                    bookedCalls = bookings;
+                    renderBookedCalls();
+                    // After loading booked calls, re-render available slots
+                    renderAvailableSlots();
+                })
+                .catch(error => {
+                    console.error('Error fetching bookings from Airtable:', error);
+                    loadBookedCallsFromLocalStorage(); // Fallback to localStorage
+                    renderBookedCalls();
+                    renderAvailableSlots();
+                });
+        } else {
+            // Fallback to localStorage if Airtable API is not available
+            loadBookedCallsFromLocalStorage();
+            renderBookedCalls();
+            // After loading booked calls, re-render available slots
+            renderAvailableSlots();
+        }
     }
 
-    function loadBookedCalls() {
+    function loadBookedCallsFromLocalStorage() {
         const storedBookings = localStorage.getItem(BOOKINGS_STORAGE_KEY);
         if (storedBookings) {
             try {
@@ -743,8 +840,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             bookedCalls = [];
         }
-         // After loading booked calls, re-render available slots to ensure they are up-to-date
-         renderAvailableSlots();
     }
 
     function renderBookedCalls() {
@@ -845,36 +940,72 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookingToCancel = bookedCalls[index];
         const cancelledSlotISO = bookingToCancel.bookedSlotISO;
 
-        // Remove booking from the array
-        bookedCalls.splice(index, 1);
-
-        // Save updated bookings to localStorage
-        try {
-            localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookedCalls));
-            console.log(`Booking at index ${index} cancelled and removed from storage.`);
-        } catch (error) {
-            console.error("Error saving updated bookings to localStorage:", error);
-            // Optionally revert the splice if saving fails? Or just log error.
-        }
-
-        // Add the slot back to available slots definition if it's not already there
-        if (!availableSlots.includes(cancelledSlotISO)) {
-            availableSlots.push(cancelledSlotISO);
-            availableSlots.sort(); // Keep sorted
-            // Save updated available slots definitions to localStorage
-            saveSlotsToLocalStorage(); // Reuse existing save function
-            console.log(`Slot ${cancelledSlotISO} added back to available definitions.`);
+        // Check if AirtableAPI is available and if we have the necessary IDs
+        if (window.AirtableAPI && bookingToCancel.id && bookingToCancel.slotId) {
+            // Use Airtable API to cancel the booking
+            window.AirtableAPI.cancelBooking(bookingToCancel.id, bookingToCancel.slotId)
+                .then(success => {
+                    // Remove booking from the local array after successful cancellation
+                    bookedCalls.splice(index, 1);
+                    
+                    // Re-render lists
+                    renderBookedCalls();
+                    
+                    // Refresh available slots from Airtable
+                    window.AirtableAPI.fetchAvailableSlots()
+                        .then(slots => {
+                            availableSlots = slots;
+                            renderAvailableSlots();
+                        })
+                        .catch(error => {
+                            console.error('Error refreshing slots from Airtable:', error);
+                            // Add the slot back locally as a fallback
+                            if (!availableSlots.includes(cancelledSlotISO)) {
+                                availableSlots.push(cancelledSlotISO);
+                                availableSlots.sort();
+                                renderAvailableSlots();
+                            }
+                        });
+                    
+                    // Hide details view
+                    hideBookingDetails();
+                    
+                    console.log(`Booking cancelled successfully in Airtable.`);
+                })
+                .catch(error => {
+                    console.error('Error cancelling booking in Airtable:', error);
+                    alert('Error cancelling booking in Airtable. See console for details.');
+                });
         } else {
-             console.log(`Slot ${cancelledSlotISO} was already in available definitions.`);
+            // Fallback to localStorage if Airtable API is not available or IDs are missing
+            
+            // Remove booking from the array
+            bookedCalls.splice(index, 1);
+
+            // Save updated bookings to localStorage
+            try {
+                localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookedCalls));
+                console.log(`Booking at index ${index} cancelled and removed from storage.`);
+            } catch (error) {
+                console.error("Error saving updated bookings to localStorage:", error);
+            }
+
+            // Add the slot back to available slots definition if it's not already there
+            if (!availableSlots.includes(cancelledSlotISO)) {
+                availableSlots.push(cancelledSlotISO);
+                availableSlots.sort(); // Keep sorted
+                // Save updated available slots definitions to localStorage
+                localStorage.setItem(SLOTS_STORAGE_KEY, JSON.stringify(availableSlots));
+                console.log(`Slot ${cancelledSlotISO} added back to available definitions.`);
+            }
+
+            // Re-render lists
+            renderBookedCalls();
+            renderAvailableSlots();
+
+            // Hide details view
+            hideBookingDetails();
         }
-
-
-        // Re-render lists
-        renderBookedCalls();
-        renderAvailableSlots(); // This will now show the slot as available again
-
-        // Hide details view if it was showing the cancelled booking
-        hideBookingDetails();
     }
 
 

@@ -339,6 +339,9 @@ const hiddenCallTypeField = document.getElementById('selected-call-type');
 const SLOTS_STORAGE_KEY = 'booking_available_slots';
 const BOOKINGS_STORAGE_KEY = 'bookingSubmissions';
 
+// Check if Airtable API is available
+const isAirtableAPIAvailable = typeof window.AirtableAPI !== 'undefined';
+
 
 // --- Calendar Popup Functions --- (Now globally accessible)
 function openCalendarPopup() {
@@ -427,6 +430,28 @@ function loadAndDisplayAvailableSlots() {
     // Ensure elements inside the calendar popup exist
     if (!calendarSlotsContainer || !calendarPopup) return;
 
+    // Show loading message
+    calendarSlotsContainer.innerHTML = '<p>Loading available time slots...</p>';
+
+    // Check if Airtable API is available
+    if (isAirtableAPIAvailable) {
+        // Use Airtable API to fetch available slots
+        window.AirtableAPI.fetchAvailableSlots()
+            .then(availableSlots => {
+                displaySlots(availableSlots);
+            })
+            .catch(error => {
+                console.error("Error fetching available slots from Airtable:", error);
+                // Fallback to localStorage if API call fails
+                loadSlotsFromLocalStorage();
+            });
+    } else {
+        // Fallback to localStorage if Airtable API is not available
+        loadSlotsFromLocalStorage();
+    }
+}
+
+function loadSlotsFromLocalStorage() {
     const storedSlots = localStorage.getItem(SLOTS_STORAGE_KEY);
     let availableSlots = [];
 
@@ -437,12 +462,19 @@ function loadAndDisplayAvailableSlots() {
                 availableSlots = [];
             }
             availableSlots.sort(); // Sort chronologically
+            displaySlots(availableSlots);
         } catch (error) {
-            console.error("Error parsing available slots:", error);
-            availableSlots = [];
+            console.error("Error parsing available slots from localStorage:", error);
+            calendarSlotsContainer.innerHTML = '<p>Error loading time slots. Please try again later.</p>';
         }
+    } else {
+        calendarSlotsContainer.innerHTML = '<p>No available time slots at the moment.</p>';
     }
+}
 
+function displaySlots(availableSlots) {
+    if (!calendarSlotsContainer) return;
+    
     calendarSlotsContainer.innerHTML = ''; // Clear previous slots
 
     if (availableSlots.length === 0) {
@@ -458,7 +490,6 @@ function loadAndDisplayAvailableSlots() {
         calendarSlotsContainer.innerHTML = '<p>No available future time slots.</p>';
         return;
     }
-
 
     futureSlots.forEach(slotISO => {
         const slotButton = document.createElement('button');
@@ -485,6 +516,8 @@ function loadAndDisplayAvailableSlots() {
 
 // --- Helper function to remove slot from availability --- (Now globally accessible)
 function removeSlotFromAvailability(slotToRemoveISO) {
+    // If Airtable API is available, the slot is already marked as booked in Airtable
+    // through the createBooking function, so we only need to update localStorage
     const storedSlots = localStorage.getItem(SLOTS_STORAGE_KEY);
     let availableSlots = [];
     if (storedSlots) {
@@ -569,11 +602,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const bookedTime = formData.get('selected-time');
 
         // Construct the ISO string using the separate variables
-    const bookedSlotISO = new Date(bookedDate + 'T' + bookedTime).toISOString(); // Keep this for potential future use or logging
+        const bookedSlotISO = new Date(bookedDate + 'T' + bookedTime).toISOString(); // Keep this for potential future use or logging
 
-    // Get all booking form data
-    const bookingFormData = {
-        callType: formData.get('selected-call-type'),
+        // Get all booking form data
+        const bookingFormData = {
+            callType: formData.get('selected-call-type'),
             date: bookedDate,
             time: bookedTime,
             firstName: formData.get('first-name'),
@@ -583,86 +616,108 @@ document.addEventListener('DOMContentLoaded', () => {
             phone: formData.get('phone') || '',   // Handle optional fields
             notes: formData.get('notes') || '',     // Handle optional fields
             submissionTimestamp: new Date().toISOString(),
-        bookedSlotISO: bookedSlotISO, // Keep ISO string
-        // Add selected package if it's a 'lets-go' call
-        ...(formData.get('selected-call-type') === 'lets-go' && packageTypeSelect ? { package: packageTypeSelect.value } : {})
-    };
+            bookedSlotISO: bookedSlotISO, // Keep ISO string
+            // Add selected package if it's a 'lets-go' call
+            ...(formData.get('selected-call-type') === 'lets-go' && packageTypeSelect ? { package: packageTypeSelect.value } : {})
+        };
 
-
-    // --- Handle ALL Call Submissions (Planning form redirect temporarily disabled) ---
-    // Send data to Make.com Webhook
-    const webhookUrl = 'https://hook.eu2.make.com/jkvuy43075o4cg89hemr9vc1r7m9w1ye'; // Using the same webhook for now
-    fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookingFormData), // Send combined data including package if 'lets-go'
-    })
-    .then(response => {
-        if (!response.ok) {
-            console.warn(`Webhook response not OK: ${response.status} ${response.statusText}`);
-            return response.text();
+        // Check if Airtable API is available
+        if (isAirtableAPIAvailable) {
+            // Use Airtable API to create the booking
+            window.AirtableAPI.createBooking(bookingFormData)
+                .then(record => {
+                    console.log('Successfully created booking in Airtable:', record);
+                    
+                    // Also send data to Make.com Webhook for email notifications
+                    sendToMakeWebhook(bookingFormData);
+                    
+                    // Close popup and redirect to thank-you page
+                    closeBookingPopup();
+                    window.location.href = 'thank-you.html?source=booking';
+                })
+                .catch(error => {
+                    console.error('Error creating booking in Airtable:', error);
+                    
+                    // Fallback to Make.com webhook and localStorage
+                    sendToMakeWebhook(bookingFormData);
+                    
+                    // Save booking to localStorage as fallback
+                    try {
+                        let bookings = JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || '[]');
+                        bookings.push(bookingFormData); // Save the complete data
+                        localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
+                        removeSlotFromAvailability(bookingFormData.bookedSlotISO);
+                    } catch (error) {
+                        console.error("Error saving booking to localStorage:", error);
+                    }
+                    
+                    // Close popup and redirect to thank-you page
+                    closeBookingPopup();
+                    window.location.href = 'thank-you.html?source=booking';
+                });
+        } else {
+            // Fallback to Make.com webhook and localStorage if Airtable API is not available
+            sendToMakeWebhook(bookingFormData);
+            
+            // Save booking to localStorage
+            try {
+                let bookings = JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || '[]');
+                bookings.push(bookingFormData); // Save the complete data
+                localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
+                removeSlotFromAvailability(bookingFormData.bookedSlotISO);
+            } catch (error) {
+                console.error("Error saving booking to localStorage:", error);
+            }
+            
+            // Close popup and redirect to thank-you page
+            closeBookingPopup();
+            window.location.href = 'thank-you.html?source=booking';
         }
-        console.log('Successfully sent data to webhook.');
-        return response.json(); // Or response.text() if Make doesn't return JSON
-    })
-    .then(data => {
-        if (data) console.log('Webhook response data:', data);
-    })
-    .catch((error) => {
-        console.error('Error sending data to webhook:', error);
-    })
-    .finally(() => {
-        // Simulate Email (Adjust log based on actual call type)
-        const callTypeTextLog = bookingFormData.callType === 'inspiring' ? 'Inspiring Call (50€)' : `Let's go Call (${bookingFormData.package || 'N/A'} Package)`;
-        console.log(`--- Booking Submission (${callTypeTextLog}) ---`);
-        console.log("Simulating email sending to: support@gameavatarai.de");
-        console.log(`Subject: New Booking Request (${callTypeTextLog})`);
-        console.log("Body:");
-        console.log(` Call Type: ${callTypeTextLog}`);
-        if (bookingFormData.package) console.log(` Package: ${bookingFormData.package}`); // Log package if present
-        console.log(` Date: ${bookingFormData.date}`);
-        console.log(` Time: ${bookingFormData.time}`);
-        console.log(` Name: ${bookingFormData.firstName} ${bookingFormData.lastName}`);
-        console.log(` Email: ${bookingFormData.email}`);
-        if (bookingFormData.company) console.log(` Company: ${bookingFormData.company}`);
-        if (bookingFormData.phone) console.log(` Phone: ${bookingFormData.phone}`);
-        if (bookingFormData.notes) console.log(` Notes: ${bookingFormData.notes}`);
-        console.log("--------------------------");
+    }
 
-        // Save booking to localStorage
-        try {
-            let bookings = JSON.parse(localStorage.getItem(BOOKINGS_STORAGE_KEY) || '[]');
-            bookings.push(bookingFormData); // Save the complete data
-            localStorage.setItem(BOOKINGS_STORAGE_KEY, JSON.stringify(bookings));
-            removeSlotFromAvailability(bookingFormData.bookedSlotISO);
-        } catch (error) {
-            console.error("Error saving booking to localStorage:", error);
-        }
-
-        // Close popup and redirect to thank-you page for ALL call types now
-        closeBookingPopup();
-        window.location.href = 'thank-you.html?source=booking';
-    });
-    // --- End Combined Submission Handling ---
-
-    /* Original fetch logic moved inside the 'else' block for Inspiring Call
-    fetch(webhookUrl, {
-        method: 'POST',
+    // Helper function to send booking data to Make.com webhook
+    function sendToMakeWebhook(bookingFormData) {
+        const webhookUrl = 'https://hook.eu2.make.com/jkvuy43075o4cg89hemr9vc1r7m9w1ye';
+        fetch(webhookUrl, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(bookingData), // This part is now inside the 'else' block
+            body: JSON.stringify(bookingFormData),
         })
         .then(response => {
             if (!response.ok) {
-                // ... rest of the original fetch logic ...
+                console.warn(`Webhook response not OK: ${response.status} ${response.statusText}`);
+                return response.text();
             }
-            // ... rest of the original fetch logic ...
+            console.log('Successfully sent data to webhook.');
+            return response.json(); // Or response.text() if Make doesn't return JSON
+        })
+        .then(data => {
+            if (data) console.log('Webhook response data:', data);
+        })
+        .catch((error) => {
+            console.error('Error sending data to webhook:', error);
+        })
+        .finally(() => {
+            // Simulate Email (Adjust log based on actual call type)
+            const callTypeTextLog = bookingFormData.callType === 'inspiring' ? 'Inspiring Call (50€)' : `Let's go Call (${bookingFormData.package || 'N/A'} Package)`;
+            console.log(`--- Booking Submission (${callTypeTextLog}) ---`);
+            console.log("Simulating email sending to: support@gameavatarai.de");
+            console.log(`Subject: New Booking Request (${callTypeTextLog})`);
+            console.log("Body:");
+            console.log(` Call Type: ${callTypeTextLog}`);
+            if (bookingFormData.package) console.log(` Package: ${bookingFormData.package}`); // Log package if present
+            console.log(` Date: ${bookingFormData.date}`);
+            console.log(` Time: ${bookingFormData.time}`);
+            console.log(` Name: ${bookingFormData.firstName} ${bookingFormData.lastName}`);
+            console.log(` Email: ${bookingFormData.email}`);
+            if (bookingFormData.company) console.log(` Company: ${bookingFormData.company}`);
+            if (bookingFormData.phone) console.log(` Phone: ${bookingFormData.phone}`);
+            if (bookingFormData.notes) console.log(` Notes: ${bookingFormData.notes}`);
+            console.log("--------------------------");
         });
-        // --- End Webhook Send --- */
-}
+    }
     // --- Attach Event Listeners ---
 
     // Function to handle opening the calendar popup and setting the call type
